@@ -1,0 +1,12 @@
+Package: chRomHMM
+Type: Package
+Title: Plot ChromHMM enrichments and, maybe, one day, run ChromHMM through rJava
+Version: 0.1
+Date: 2012-10-12
+Author: Tim Triche, Jr. with much help from Fides Lay, Hui Shen, and Jason Ernst
+Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
+Description: No really, it just makes plots from ChromHMM segmentations. 
+Depends: rtracklayer, Matrix, ggbio
+Imports: IRanges, GenomicRanges, GenomicFeatures, rtracklayer, Matrix
+Suggests: Homo.sapiens, Repitools, easyRNAseq, minfi, regulatoR, Gviz
+License: APL
