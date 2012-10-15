@@ -1,9 +1,9 @@
-\name{chRomHMM-package}
-\alias{chRomHMM-package}
-\alias{chRomHMM}
+\name{chromophobe-package}
+\alias{chromophobe-package}
+\alias{chromophobe}
 \docType{package}
 \title{
-Package to plot genomic enrichments, as with ChromHMM models
+Package to plot genomic enrichments for (e.g.) ChromHMM state models
 }
 \description{
   ChromHMM is a wonderful tool for heavy lifting and modeling chromatin states.
@@ -14,7 +14,7 @@ Package to plot genomic enrichments, as with ChromHMM models
 }
 \details{
 \tabular{ll}{
-Package: \tab chRomHMM\cr
+Package: \tab chromophobe\cr
 Type: \tab Package\cr
 Version: \tab 0.1\cr
 Date: \tab 2012-10-12\cr
