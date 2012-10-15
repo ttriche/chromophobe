@@ -1,4 +1,4 @@
-import(Gviz)
+import(rJava)
 import(Matrix)
 import(Biobase)
 import(rtracklayer)
