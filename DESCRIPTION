@@ -6,7 +6,7 @@ Date: 2012-10-14
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: No really, it just makes plots from ChromHMM segmentations for now.
-Depends: R (>= 2.15), BiocGenerics (>= 0.1.12), IRanges (>= 1.15.45), methods
+Depends: R (>= 2.15), BiocGenerics, IRanges (>= 1.15.45), methods, ggplot2
 Imports: rJava, Matrix, Biobase, rtracklayer, GenomicRanges, GenomicFeatures
 Suggests: Homo.sapiens, VariantAnnotation, Repitools, regulatoR, Gviz, ggbio
 License: APL
