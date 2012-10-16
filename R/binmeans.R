@@ -1,7 +1,9 @@
 ## from Martin Morgan, via R-devel, 10/03/2012
 ## 
-require(inline)
-binmean <- cfunction(signature(x="numeric", bx="numeric"),
+binmeans <- function(x, bx) {
+  if(!exists('binmean')) {
+    require(inline)
+    binmean <- cfunction(signature(x="numeric", bx="numeric"),
 "   int nx = Rf_length(x), nb = Rf_length(bx), i, j, n;
     SEXP ans = PROTECT(NEW_NUMERIC(nb));
     double sum, *xp = REAL(x), *bxp = REAL(bx), *ansp = REAL(ans);
@@ -18,6 +20,9 @@ binmean <- cfunction(signature(x="numeric", bx="numeric"),
     UNPROTECT(1);
     return ans;
 ")
+  }
+  binmean(x, bx)
+}
 
 ## test case:
 ##
