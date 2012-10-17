@@ -1,8 +1,12 @@
 import.ChromHMM <- function(file, genome=NULL, states=NULL, as=c('GR','GRL')) {
   x <- import.bed(file, asRangedData=FALSE)
   mcols(x)$name <- as.factor(mcols(x)$name)
-  if(!is.null(states) && all(levels(mcols(x)$name) %in% names(states))) {
-    levels(mcols(HMM)$name) <- states[levels(mcols(HMM)$name)]
+  if(!is.null(states)) {
+    if(all(levels(mcols(x)$name) %in% names(states))) {
+      levels(mcols(x)$name) <- states[levels(mcols(x)$name)]
+    } else {
+      stop("The HMM has more states than your list, or different state names.")
+    }
   }
   if(!is.null(genome)) {
     genome(x) <- genome

@@ -1,0 +1,39 @@
+\documentclass[a4paper,12pt,nogin]{article}
+%\VignetteIndexEntry{The chromophobe package}
+%\VignettePackage{chromophobe}
+
+\usepackage{amsmath}    % need for subequations
+\usepackage{amssymb}    %useful mathematical symbols
+\usepackage{bm}         %needed for bold greek letters and math symbols
+\usepackage{graphicx}   % need for PS figures
+\usepackage{verbatim}   % useful for program listings
+\usepackage{color}      % use if color is used in text
+\usepackage{hyperref}   % use for hypertext links
+\usepackage{natbib}     % number and author-year style referencing
+%\usepackage{epsf} 
+%\usepackage{lscape} 
+%\bibpunct{(}{)}{;}{a}{,}{,}
+\usepackage[hmargin=2.5cm,vmargin=3cm]{geometry}
+
+%\pagestyle{empty} % use if page numbers not wanted
+
+\begin{document}
+
+\title{\texttt{chromophobe}: the lazy person's chromatin state model builder}
+\small
+\author{Tim Triche, Jr. and a cast of several}
+\normalsize
+\date{}
+
+\maketitle
+\section{Introduction}
+\label{sec:intro}
+
+The \texttt{chromophobe} package provides tools go generate plots from chromatin
+state models. Currently this document is just a placeholder but it should evolve
+apace with \texttt{chromophobe} and \texttt{ChromHMM} itself, especially since 
+the sources for the latter are now available on GitHub for hardcore forking.
+
+
+
+\end{document}

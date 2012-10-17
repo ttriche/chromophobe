@@ -1,8 +1,8 @@
 Package: chromophobe
 Type: Package
 Title: Plot ChromHMM enrichments and, eventually, run ChromHMM through rJava
-Version: 0.5
-Date: 2012-10-15
+Version: 0.6
+Date: 2012-10-16
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: No really, it just makes plots from ChromHMM segmentations for now.
