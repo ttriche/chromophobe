@@ -1,13 +1,13 @@
 Package: chromophobe
 Type: Package
 Title: Plot ChromHMM enrichments and, eventually, run ChromHMM through rJava
-Version: 0.10
-Date: 2012-10-17
+Version: 0.11
+Date: 2012-10-18
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
-Description: It just makes simple plots from ChromHMM segmentations for now.
+Description: Generate plots from ChromHMM and similar chromatin state models
 Depends: R (>= 2.15), GenomicRanges (>= 1.10), methods, ggplot2
 Imports: Matrix, Biobase, GenomicRanges, rtracklayer
-Suggests: Homo.sapiens, VariantAnnotation, Repitools, Gviz, ggbio, inline, rJava
+Suggests: Homo.sapiens, Repitools, TransView, Gviz, ggbio, inline, rJava
 Enhances: regulatoR
 License: APL
