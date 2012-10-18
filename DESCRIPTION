@@ -6,8 +6,8 @@ Date: 2012-10-18
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Generate plots from ChromHMM and similar chromatin state models
-Depends: R (>= 2.15), GenomicRanges (>= 1.10), methods, ggplot2
-Imports: Matrix, Biobase, GenomicRanges, rtracklayer
-Suggests: Homo.sapiens, Repitools, TransView, Gviz, ggbio, inline, rJava
+Depends: R (>= 2.15), GenomicRanges (>= 1.10), methods, pheatmap, TransView 
+Imports: Matrix, GenomicRanges, rtracklayer
+Suggests: Homo.sapiens, Repitools, Gviz, ggbio, inline, rJava
 Enhances: regulatoR
 License: APL
