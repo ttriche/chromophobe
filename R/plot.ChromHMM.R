@@ -2,7 +2,7 @@
 ##
 ## FIXME: handle WIG tracks and other things with scores/depths
 ##
-plot.ChromHMM <- function(HMMs, GR=NULL, subset=NULL, colors=NULL) { # {{{
+plot.ChromHMM <- function(HMMs, GR=NULL, asReads=FALSE, ...) {
 
   require(ggplot2)
   if(is.null(GR)) what <- 'genomic base'
@@ -12,9 +12,13 @@ plot.ChromHMM <- function(HMMs, GR=NULL, subset=NULL, colors=NULL) { # {{{
     if(is.list(GR) || is(GR, 'GRangesList')) {
       message('Lists of comparisons are not yet supported, but they should be!')
     }
-    byState <- data.frame(do.call(cbind, lapply(HMMs, basesByState, GR=GR)))  
+    byState <- data.frame(do.call(cbind, 
+                                  lapply(HMMs, 
+                                         basesByState, 
+                                         GR=GR, 
+                                         asReads=asReads)))  
   } else { 
-    byState <- data.frame(HMM=basesByState(HMMs, GR=GR))
+    byState <- data.frame(HMM=basesByState(HMMs, GR=GR, asReads=asReads))
   }
   byState$state <- factor(rownames(byState))
 
@@ -32,25 +36,32 @@ plot.ChromHMM <- function(HMMs, GR=NULL, subset=NULL, colors=NULL) { # {{{
     ylab(paste0('Cumulative fraction of ', what, 's occupied')) +
     xlab('Cell type') + 
     ggtitle(title)
-} # }}}
+}
 
-basesByState <- function(x, GR=NULL, statecol='state') { # {{{
+basesByState <- function(x, GR=NULL, asReads=F, wig=F, statecol='state', ...) {
   stopifnot(is(x, 'GenomicRanges'))
+  if(wig == TRUE) stop('Wig files and pileups are not yet supported...')
   if(!is.null(GR)) {
-    ol <- findOverlaps(x, GR)
-    subx <- x[queryHits(ol)]
-    subGR <- GR[subjectHits(ol)]
-    disjoint <- subsetByOverlaps(disjoin(c(subx, subGR, ignore.mcols=T)), subGR)
-    mcols(disjoint)[,statecol] <- rep('', length(disjoint))
-    byState <- split(subx, mcols(subx)[,statecol])
-    for(state in names(byState)) {
-      overlapping <- queryHits(findOverlaps(disjoint, byState[[state]]))
-      if(length(overlapping)>0) mcols(disjoint[overlapping])[,statecol] <- state
+    if(asReads==TRUE) { ## don't disjoin and count bases if handed reads
+      byState <- split(x, mcols(x)[,statecol])
+      sort(unlist(lapply(byState, function(xx) sum(countOverlaps(xx, GR,...)))))
+    } else { 
+      ol <- findOverlaps(x, GR)
+      subx <- x[queryHits(ol)]
+      subGR <- GR[subjectHits(ol)]
+      disjoint <- subsetByOverlaps(disjoin(c(subx,subGR,ignore.mcols=T)), subGR)
+      mcols(disjoint)[,statecol] <- rep('', length(disjoint))
+      byState <- split(subx, mcols(subx)[,statecol])
+      for(state in names(byState)) {
+        overlapping <- queryHits(findOverlaps(disjoint, byState[[state]]))
+        if(length(overlapping)>0) mcols(disjoint[overlapping])[,statecol]<-state
+      }
+      mcols(disjoint)[,statecol] <- as.factor(mcols(disjoint)[,statecol])
+      byState <- split(disjoint, mcols(disjoint)[,statecol])
+      sort(unlist(lapply(byState, function(xx) sum(as.numeric(width(xx))))))
     }
-    mcols(disjoint)[,statecol] <- as.factor(mcols(disjoint)[,statecol])
-    byState <- split(disjoint, mcols(disjoint)[,statecol])
   } else { 
     byState <- split(x, mcols(x)[,statecol])
+    sort(unlist(lapply(byState, function(xx) sum(as.numeric(width(xx))))))
   }
-  sort(unlist(lapply(byState, function(xx) sum(as.numeric(width(xx))))))
-} # }}} 
+}
