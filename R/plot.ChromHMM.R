@@ -1,18 +1,56 @@
-## plot genome % for a given HMM's states
+## plot genome or site % occupancy for a given HMM's states
 ##
-## soon: plot a bunch of other shit too
-plot.ChromHMM <- function(HMM, what='genome') {
+## FIXME: handle WIG tracks and other things with scores/depths
+##
+plot.ChromHMM <- function(HMMs, GR=NULL, subset=NULL, colors=NULL) { # {{{
 
   require(ggplot2)
+  if(is.null(GR)) what <- 'genomic base'
+  else what <- paste(as.character(match.call()["GR"]), 'site')
+  title <- paste(what, 'occupancy by HMM state')
+  if(is.list(HMMs)) {
+    if(is.list(GR) || is(GR, 'GRangesList')) {
+      message('Lists of comparisons are not yet supported, but they should be!')
+    }
+    byState <- data.frame(do.call(cbind, lapply(HMMs, basesByState, GR=GR)))  
+  } else { 
+    byState <- data.frame(HMM=basesByState(HMMs, GR=GR))
+  }
+  byState$state <- factor(rownames(byState))
 
-  ## initially: do a stack plot of genomic state occupancy and co-occurrence 
-  ##            for a list of HMMs (e.g. the RoadCODE3 runs, for example) to 
-  ##            allow coalescing and pruning redundant states.  
-  ## 
-  ## later:     CTCF enrichments, pyroPlots, etc.
-  ## 
+  require(reshape2)
+  byState <- melt(byState, id.vars='state')
+  names(byState) <- gsub('^variable$', 'cell', names(byState))
+  names(byState) <- gsub('^value$', 'bases', names(byState))
+  ggplot(byState, aes(y=bases, x=factor(cell), fill=state)) + 
+    geom_bar(position="fill") + 
+    theme(plot.title=element_text(face="bold", size=14),
+          axis.title.y=element_text(face="bold", colour="#990000", size=14),
+          axis.text.y=element_text(size=12), 
+          axis.title.x=element_text(face="bold", colour="#990000", size=14),
+          axis.text.x=element_text(angle=45, hjust=1, size=12)) + 
+    ylab(paste0('Cumulative fraction of ', what, 's occupied')) +
+    xlab('Cell type') + 
+    ggtitle(title)
+} # }}}
 
-  stop("Ain't done yet")
-
-}
-
+basesByState <- function(x, GR=NULL, statecol='state') { # {{{
+  stopifnot(is(x, 'GenomicRanges'))
+  if(!is.null(GR)) {
+    ol <- findOverlaps(x, GR)
+    subx <- x[queryHits(ol)]
+    subGR <- GR[subjectHits(ol)]
+    disjoint <- subsetByOverlaps(disjoin(c(subx, subGR, ignore.mcols=T)), subGR)
+    mcols(disjoint)[,statecol] <- rep('', length(disjoint))
+    byState <- split(subx, mcols(subx)[,statecol])
+    for(state in names(byState)) {
+      overlapping <- queryHits(findOverlaps(disjoint, byState[[state]]))
+      if(length(overlapping)>0) mcols(disjoint[overlapping])[,statecol] <- state
+    }
+    mcols(disjoint)[,statecol] <- as.factor(mcols(disjoint)[,statecol])
+    byState <- split(disjoint, mcols(disjoint)[,statecol])
+  } else { 
+    byState <- split(x, mcols(x)[,statecol])
+  }
+  sort(unlist(lapply(byState, function(xx) sum(as.numeric(width(xx))))))
+} # }}} 
