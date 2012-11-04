@@ -12,5 +12,7 @@ import.posterior <- function(HMM, posteriorPath, states=NULL) {
   ## 
   stop("Ain't done yet.  Feel free to send me a patch though! --t")
 
+  require(Matrix)
+
 }
 

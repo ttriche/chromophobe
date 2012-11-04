@@ -1,0 +1,41 @@
+## generic container for joint segmentations, inherits from SE
+setClass('JointSegmentation', # {{{ a tweaked SummarizedExperiment
+         representation(probinit='data.frame',
+                        emissions='data.frame', 
+                        transitions='matrix'),
+         contains="SummarizedExperiment") # }}}
+
+## iniial state probabilities
+setGeneric('probinit', function(object, ...) standardGeneric('probinit')) 
+setMethod('probinit', signature(object='JointSegmentation'), # {{{
+          function(object) object@probinit) # }}}
+
+## emission matrix
+setGeneric('emissions', function(object, ...) standardGeneric('emissions'))
+setMethod('emissions', signature(object='JointSegmentation'), # {{{
+          function(object) object@emissions) # }}}
+
+## transition matrix
+setGeneric('transitions', function(object, ...) standardGeneric('transitions'))
+setMethod('transitions', signature(object='JointSegmentation'), # {{{
+          function(object) object@transitions) # }}}
+
+## retrieve a hard-thresholded segmentation or subset thereof
+setGeneric('segmented', function(object, x, ...) standardGeneric('segmented'))
+setMethod('segmented', signature(object='JointSegmentation', x='character'),#{{{
+          function(object, x) rowData(object)[[x]]) # }}}
+setMethod('segmented', signature(object='JointSegmentation', x='missing'),#{{{
+          function(object, x) rowData(object)) # }}}
+
+## posterior state probabilities: column per cell type, matrix per state?
+setGeneric('posterior', function(object, x, ...) standardGeneric('posterior'))
+setMethod('posterior', signature(object='JointSegmentation', x='character'),#{{{
+          function(object, x) {
+            stop('FIXME: Posterior probabilities are not yet supported!')
+          }) # }}}
+
+## genome-wide or GenomicRanges-wide occupancy for a JointSegmentation
+setMethod('plot', signature(x='JointSegmentation', y='GRanges'), # {{{
+          function(x, y, ...) plotChromHMM(x, y, ...)) # }}}
+setMethod('plot', signature(x='JointSegmentation', y='missing'), # {{{
+          function(x, y, ...) plotChromHMM(x, ...)) # }}}

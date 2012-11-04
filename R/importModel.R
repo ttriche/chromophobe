@@ -1,29 +1,45 @@
-import.model <- function(file, states=NULL) {
+importModel <- function(file, states=NULL, loud=FALSE) {
+
+  if(loud) message(paste('Importing model parameters from', file, '...'))
 
   require(utils)
+  require(reshape2)
   w <- rep('character', 6)
   model <- suppressWarnings(read.table(file, header=F, skip=1, fill=T, colCl=w))
   names(model)[1] <- 'what'
   model$what <- as.factor(model$what)
-  model.bits <- split(model, model$what)
+  model.pieces <- split(model, model$what)
 
-  emissions <- model.bits$emissionprobs[,-1]
+  ## handy for when we don't have state names 
+  getStates <- function(x) unique(as.numeric(x[['state']]))
+
+  ## initial state probabilities
+  probinit <- model.pieces$probinit[,2:3]
+  names(probinit) <- c('state','p')
+  if(is.null(states)) states <- getStates(probinit)
+  else message('Collapsing states has not been debugged -- you are warned!')
+  probinit$state <- with(probinit, factor(states[as.numeric(state)]))
+  probinit$p <- as.numeric(probinit$p) 
+  model.pieces$probinit <- probinit
+
+  ## emission probabilities
+  emissions <- model.pieces$emissionprobs[,-1]
   names(emissions) <- c('state','id','mark','keep','p')
-  emissions$state <- as.factor(paste0('E', emissions$state))
-  emissions$mark <- as.factor(emissions$mark)
+  emissions$state <- with(emissions, factor(states[as.numeric(state)]))
+  emissions$mark <- with(emissions, factor(mark, labels=unique(mark)))
   emissions$p <- as.numeric(emissions$p)
   emissions <- emissions[ emissions$keep==1, c('state','mark','p') ]
-  rownames(emissions) <- paste(emissions$state, emissions$mark, sep='.')
+  model.pieces$emissions <- emissions
 
-  transitions <- model.bits$transitionprobs[,-1]
+  ## transition probabilities
+  transitions <- model.pieces$transitionprobs[,-1]
   names(transitions) <- c('from','to','p')
-  transitions$from <- as.factor(paste0('E', transitions$from))
-  transitions$to <- as.factor(paste0('E', transitions$to))
+  transitions$from <- as.numeric(transitions$from)
+  transitions$to <- as.numeric(transitions$to)
   transitions$p <- as.numeric(transitions$p)
   transitions <- transitions[, c('from','to','p')]
-  rownames(transitions) <- paste(transitions$from, transitions$to, sep='.')
+  model.pieces$transitions <- acast(transitions, to ~ from, value.var='p')
 
-  model <- list(emissions=emissions, transitions=transitions)
-  return(model)
+  return(model.pieces[ c('probinit','emissions','transitions')])
 
 }
