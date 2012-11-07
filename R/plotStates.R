@@ -26,17 +26,21 @@ plotEmissions <- function(emissions, states=NULL, target=NULL, ...) { # {{{
   if(!is.null(target)) {
     pheatmap2(reshapeEmissions(emissions, 'matrix'),
               color=colorRampPalette(c('white','darkblue'))(100), 
-              legend=F, fontsize=16, cellwidth=16, cellheight=16,
+              legend=T, fontsize=16, cellwidth=16, cellheight=16,
               clustering_distance_rows='manhattan', 
               clustering_distance_cols='manhattan',
               border_color='white', 
-              kmeans_k=target, ... )
+              kmeans_k=target, 
+              main=paste('Emissions for', target, 'target states'),
+              ... )
   } else {
+    nStates <- length(unique(emissions(AML200)$state))
     pheatmap2(reshapeEmissions(emissions, 'matrix'),
               color=colorRampPalette(c('white','darkblue'))(100), 
-              legend=F, fontsize=16, cellwidth=16, cellheight=16,
+              legend=T, fontsize=16, cellwidth=16, cellheight=16,
               clustering_distance_rows='manhattan', 
               clustering_distance_cols='manhattan',
+              main=paste('Emissions for all', nStates, 'states'),
               border_color='white', ... )
   }
 
@@ -46,13 +50,16 @@ plotTransitions <- function(transitions, emissions=NULL, cluster=F, ...) { # {{{
   require(pheatmap)
   if(is.null(emissions)) {
     pheatmap2(t(transitions), cluster_col=cluster, cluster_row=cluster,
+              fontsize=12, cellwidth=16, cellheight=16,
               main='Transition probabilities, from state y to state x', ...)
   } else { 
     ann_colors <- list()
     ann <- reshapeEmissions(emissions, 'data.frame')[,-1]
     for(i in names(ann)) ann_colors[[i]] <- c('white','darkblue')
     pheatmap2(t(transitions), cluster_col=cluster, cluster_row=cluster,
+              fontsize=12, cellwidth=16, cellheight=16,
               annotation=ann, annotation_colors=ann_colors, annotation_legend=F,
-              main='Transition probabilities, from state y to state x', ...)
+              main=paste('Transition & emission probabilities by state'),
+              ...)
   }
 } # }}}

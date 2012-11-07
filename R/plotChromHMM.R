@@ -2,12 +2,14 @@
 ##
 ## FIXME: handle WIG tracks and other things with scores/depths, like segtools!
 ##
-plotChromHMM <- function(object, GR=NULL, colors=NULL, asReads=FALSE, ...){
+plotChromHMM <- function(object,GR=NULL,colors=NULL,asReads=F,name=NULL,...) {
 
   require(ggplot2)
   if(is.null(GR)) {
     what <- 'genomic base'
-  } else {
+  } else if(!is.null(name)) {
+    what <- paste(name, 'site')
+  } else { 
     what <- paste(as.character(match.call()["GR"]), 'site')
   }
   title <- paste(what, 'occupancy by HMM state')

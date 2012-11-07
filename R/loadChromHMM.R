@@ -1,9 +1,10 @@
 loadChromHMM <- function(path='.', g=NULL, states=NULL) { 
 
+  require(rtracklayer)
   if(path != '.') oldwd <- getwd()
   setwd(path)
   argv <- list()
-  if(grepl('labelStates.txt', list.files()) && is.null(states)) {
+  if('labelStates.txt' %in% list.files() && is.null(states)) {
     states <- importLabelStates('labelStates.txt')
   }
   if(length(list.files(patt='webpage')) > 0) {

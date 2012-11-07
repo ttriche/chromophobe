@@ -1,7 +1,7 @@
 Package: chromophobe
 Type: Package
 Title: Plot chromatin state models and enrichments; eventually, build the models
-Version: 0.17
+Version: 0.18
 Date: 2012-11-07
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>

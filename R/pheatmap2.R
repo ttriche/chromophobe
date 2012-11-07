@@ -1,6 +1,7 @@
 jet.colors <- colorRampPalette(rev(c("#D73027", "#FC8D59", "#FEE090", "#FFFFBF",
                                      "#E0F3F8", "#91BFDB", "#4575B4")))(100) 
 
+## user-facing function, tweaked to allow annotation labels 
 pheatmap2 <- function(mat, color=jet.colors, kmeans_k=NA, breaks=NA, 
                       border_color="grey60", cellwidth=NA, cellheight=NA, 
                       scale="none", cluster_rows=TRUE, cluster_cols=TRUE, 
@@ -15,9 +16,14 @@ pheatmap2 <- function(mat, color=jet.colors, kmeans_k=NA, breaks=NA,
                       main=NA, fontsize=10, fontsize_row=fontsize, 
                       fontsize_col=fontsize, display_numbers=F, 
                       number_format="%.2f", fontsize_number=0.8 * fontsize, 
-                      filename=NA, width=NA, height=NA, ...) { # {{{
+                      filename=NA, width=NA, height=NA, ...) 
+{ # {{{
 
+  require(grid)
+  require(pheatmap)
   mat <- as.matrix(mat)
+  scale_mat <- pheatmap:::scale_mat
+  cluster_mat <- pheatmap:::cluster_mat
   mat <- scale_mat(mat, scale)
   if(!is.na(kmeans_k)) {
     km <- kmeans(mat, kmeans_k, iter.max=100)
@@ -63,6 +69,7 @@ pheatmap2 <- function(mat, color=jet.colors, kmeans_k=NA, breaks=NA,
   }
 
   if(is.na(breaks[1])) {
+    generate_breaks <- pheatmap:::generate_breaks
     breaks=generate_breaks(as.vector(mat), length(color))
   }
 
@@ -82,19 +89,21 @@ pheatmap2 <- function(mat, color=jet.colors, kmeans_k=NA, breaks=NA,
   } else {
     legend=NA
   }
+  scale_colours <- pheatmap:::scale_colours
   mat <- scale_colours(mat, col=color, breaks=breaks)
 
   if(!is.na(annotation[[1]][1])) {
-      annotation <- annotation[colnames(mat), , drop=F]
-      annotation_colors <- generate_annotation_colours(annotation, 
-                                                       annotation_colors, 
-                                                       drop=drop_levels)
+    generate_annotation_colours <- pheatmap:::generate_annotation_colours
+    annotation <- annotation[colnames(mat), , drop=F]
+    annotation_colors <- generate_annotation_colours(annotation, 
+                                                     annotation_colors, 
+                                                     drop=drop_levels)
   }
 
   if(!show_rownames) rownames(mat)=NULL
   if(!show_colnames) colnames(mat)=NULL
   
-  pheatmap_motor(mat, border_color=border_color, cellwidth=cellwidth, 
+  pheatmap.motor(mat, border_color=border_color, cellwidth=cellwidth, 
                  cellheight=cellheight, treeheight_col=treeheight_col, 
                  treeheight_row=treeheight_row, tree_col=tree_col, 
                  tree_row=tree_row, filename=filename, width=width, 
@@ -107,14 +116,18 @@ pheatmap2 <- function(mat, color=jet.colors, kmeans_k=NA, breaks=NA,
 
 } # }}}
 
+## internal function, tweaked to allow annotation labels 
 pheatmap.motor <- function(matrix, border_color, cellwidth, cellheight, 
                            tree_col, tree_row, treeheight_col, treeheight_row,
                            filename, width, height, breaks, color, legend, 
                            annotation, annotation_colors, annotation_legend, 
                            main, fontsize, fontsize_row, fontsize_col, fmat, 
-                           fontsize_number, ...) { # {{{
+                           fontsize_number, ...) 
+{ # {{{
 
   grid.newpage()
+  lo <- pheatmap:::lo
+  draw_dendrogram <- pheatmap:::draw_dendrogram
   mindim=lo(coln=colnames(matrix), rown=rownames(matrix), 
             nrow=nrow(matrix), ncol=ncol(matrix), cellwidth=cellwidth, 
             cellheight=cellheight, treeheight_col=treeheight_col, 
@@ -124,6 +137,7 @@ pheatmap.motor <- function(matrix, border_color, cellwidth, cellheight,
             main=main, fontsize=fontsize, fontsize_row=fontsize_row, 
             fontsize_col=fontsize_col, ...)
 
+  vplayout <- pheatmap:::vplayout
   if (!is.na(filename)) {
     pushViewport(vplayout(1:5, 1:5))
     if (is.na(height)) {
@@ -144,7 +158,7 @@ pheatmap.motor <- function(matrix, border_color, cellwidth, cellheight,
                 bmp=function(x, ...) bmp(x, units="in", res=300, ...), 
                 stop("File type should be: pdf, png, bmp, jpg, tiff"))
     f(filename, height=height, width=width)
-    pheatmap_motor(matrix, cellwidth=cellwidth, cellheight=cellheight, 
+    pheatmap.motor(matrix, cellwidth=cellwidth, cellheight=cellheight, 
                    border_color=border_color, tree_col=tree_col, 
                    tree_row=tree_row, treeheight_col=treeheight_col, 
                    treeheight_row=treeheight_row, breaks=breaks, 
@@ -161,6 +175,7 @@ pheatmap.motor <- function(matrix, border_color, cellwidth, cellheight,
 
   if (mindim < 3) border_color=NA
 
+  draw_main <- pheatmap:::draw_main
   if (!is.na(main)) {
     pushViewport(vplayout(1, 2))
     draw_main(main, fontsize=1.3 * fontsize, ...)
@@ -180,6 +195,11 @@ pheatmap.motor <- function(matrix, border_color, cellwidth, cellheight,
   }
 
   pushViewport(vplayout(4, 2))
+  draw_legend <- pheatmap:::draw_legend
+  draw_matrix <- pheatmap:::draw_matrix
+  draw_colnames <- pheatmap:::draw_colnames
+  draw_rownames <- pheatmap:::draw_rownames
+  convert_annotations <- pheatmap:::convert_annotations
   draw_matrix(matrix, border_color, fmat, fontsize_number)
   upViewport()
 
@@ -199,23 +219,24 @@ pheatmap.motor <- function(matrix, border_color, cellwidth, cellheight,
   }
 
   ## Hui's patch
-  draw_annotations <- function(converted_annotations, border_color) {
-    n=ncol(converted_annotations)
-    m=nrow(converted_annotations)
-    x=(1:m)/m - 1/2/m
-    y=cumsum(rep(8, n)) - 4 + cumsum(rep(2, n))
+  draw_annotations <- function(converted_annotations, border_color) { # {{{
+    n <- ncol(converted_annotations)
+    m <- nrow(converted_annotations)
+    x <- (1:m)/m - 1/2/m
+    y <- cumsum(rep(8, n)) - 4 + cumsum(rep(2, n))
     for (i in 1:m) {
       grid.rect(x=x[i], 
                 unit(y[1:n], "bigpts"), 
                 width=1/m, height=unit(8, "bigpts"), 
                 gp=gpar(fill=converted_annotations[i,], col=border_color))
     }
-    grid.text(names(annotation), x=1, unit(y[1:n], "bigpts"), just="right")
-  }
+    grid.text(paste('', names(annotation)), 
+              x=1, unit(y[1:n],"bigpts"), just="left")
+  } # }}}
 
   if (!is.na(annotation[[1]][1])) {
     pushViewport(vplayout(3, 2))
-    converted_annotation=convert_annotations(annotation, annotation_colors)
+    converted_annotation <- convert_annotations(annotation, annotation_colors)
     draw_annotations(converted_annotation, border_color)
     upViewport()
   }
