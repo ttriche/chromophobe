@@ -10,39 +10,49 @@ plotStates <- function(object, what='emissions', states=NULL, target=NULL,...){
   }
 }
 
+reshapeEmissions <- function(emissions, how='matrix') { # {{{ refactored
+  require('reshape2')
+  if(how == 'matrix') acast(emissions, state ~ mark, value.var='p')
+  else if(how == 'data.frame') dcast(emissions, state ~ mark, value.var='p')
+  else stop(paste("Don't know how to reshape emissions into a", how))
+} # }}}
+
 plotEmissions <- function(emissions, states=NULL, target=NULL, ...) { # {{{
 
-  require('reshape2')
   require('pheatmap')
-
-  ## deal with state assignments here:
   if(!is.null(states)) message('Have not dealt with state assignments yet :-/')
 
   ## now cast to a manageable structure and plot
-  mat <- acast(emissions, state ~ mark, value.var='p')
   if(!is.null(target)) {
-    p <- pheatmap(mat, color=colorRampPalette(c('white','darkblue'))(100), 
-                  legend=F, fontsize=16, cellwidth=16, cellheight=16,
-                  clustering_distance_rows='manhattan', 
-                  clustering_distance_cols='manhattan',
-                  border_color='white', 
-                  kmeans_k=target, ...)
+    pheatmap2(reshapeEmissions(emissions, 'matrix'),
+              color=colorRampPalette(c('white','darkblue'))(100), 
+              legend=F, fontsize=16, cellwidth=16, cellheight=16,
+              clustering_distance_rows='manhattan', 
+              clustering_distance_cols='manhattan',
+              border_color='white', 
+              kmeans_k=target, ... )
   } else {
-    p <- pheatmap(mat, color=colorRampPalette(c('white','darkblue'))(100), 
-                  legend=F, fontsize=16, cellwidth=16, cellheight=16,
-                  clustering_distance_rows='manhattan', 
-                  clustering_distance_cols='manhattan',
-                  border_color='white', ...)
+    pheatmap2(reshapeEmissions(emissions, 'matrix'),
+              color=colorRampPalette(c('white','darkblue'))(100), 
+              legend=F, fontsize=16, cellwidth=16, cellheight=16,
+              clustering_distance_rows='manhattan', 
+              clustering_distance_cols='manhattan',
+              border_color='white', ... )
   }
-  return(p)
 
 } # }}}
 
-plotTransitions <- function(trans, states=NULL, cluster=F, ...) { # {{{
-  message("FIXME: Include mark frequencies as row/column annotations!")
+plotTransitions <- function(transitions, emissions=NULL, cluster=F, ...) { # {{{
   require(pheatmap)
-  if(!is.null(states)) stop('Collapsing states is not yet supported')
-  pheatmap(t(trans), cluster_col=cluster, cluster_row=cluster,
-           ## add annotations here
-           main='Transition probabilities, from state y to state x')
+  if(is.null(emissions)) {
+    pheatmap2(t(transitions), cluster_col=cluster, cluster_row=cluster,
+              main='Transition probabilities, from state y to state x', ...)
+  } else { 
+    ann_colors <- list()
+    ann <- reshapeEmissions(emissions, 'data.frame')[,-1]
+    for(i in names(ann)) ann_colors[[i]] <- c('white','darkblue')
+    pheatmap2(t(transitions), cluster_col=cluster, cluster_row=cluster,
+              annotation=ann, annotation_colors=ann_colors, annotation_legend=F,
+              main='Transition probabilities, from state y to state x', ...)
+  }
 } # }}}

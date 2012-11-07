@@ -37,5 +37,15 @@ setMethod('posterior', signature(object='JointSegmentation', x='character'),#{{{
 ## genome-wide or GenomicRanges-wide occupancy for a JointSegmentation
 setMethod('plot', signature(x='JointSegmentation', y='GRanges'), # {{{
           function(x, y, ...) plotChromHMM(x, y, ...)) # }}}
+setMethod('plot', signature(x='JointSegmentation', y='character'), # {{{
+          function(x, y, ...) {
+            if( y == 'emissions' ) {
+              plotEmissions(emissions(x), ...)
+            } else if( y == 'transitions' ) {
+              plotTransitions(transitions(x), emissions(x), ...)
+            } else {
+              stop(paste("Don't know how to plot",y,"for a JointSegmentation"))
+            }
+          }) # }}}
 setMethod('plot', signature(x='JointSegmentation', y='missing'), # {{{
           function(x, y, ...) plotChromHMM(x, ...)) # }}}

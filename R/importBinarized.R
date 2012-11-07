@@ -1,4 +1,8 @@
-import.binarized <- function(HMM, binarizedPath) {
+importBinarized <- function(HMM, binarizedPath) {
+
+  if(!is(HMM, 'JointSegmentation')) {
+    stop('Need an already-loaded JointSegmentation model to load binary files!')
+  }
 
   ## given an HMM GRanges/GRangesList, read in the matrices of marks (0/1/NA)
   ## corresponding to the binned/binarized data from ChromHMM BinarizeBed and
