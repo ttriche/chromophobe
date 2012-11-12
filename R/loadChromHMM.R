@@ -12,7 +12,7 @@ loadChromHMM <- function(path='.', g=NULL, states=NULL) {
     argv <- parseCommand(calls)
     g <- argv$genome
   }
-  modelFile <- grep('^model_.*\\.txt$', list.files(), value=T)
+  modelFile <- grep('^model_?[123456789]*\\.txt$', list.files(), value=T)
   model <- importModel(modelFile, loud=TRUE)
   files <- list.files(patt='.*_segments.bed$')
   names(files) <- gsub('_segments.bed$', '', files)

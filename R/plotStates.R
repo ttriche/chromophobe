@@ -34,7 +34,7 @@ plotEmissions <- function(emissions, states=NULL, target=NULL, ...) { # {{{
               main=paste('Emissions for', target, 'target states'),
               ... )
   } else {
-    nStates <- length(unique(emissions(AML200)$state))
+    nStates <- length(unique(emissions$state))
     pheatmap2(reshapeEmissions(emissions, 'matrix'),
               color=colorRampPalette(c('white','darkblue'))(100), 
               legend=T, fontsize=16, cellwidth=16, cellheight=16,
