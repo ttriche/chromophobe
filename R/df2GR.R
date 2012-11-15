@@ -19,11 +19,14 @@ df2GR <- function(df, keepColumns=F, ignoreStrand=F, prefix='chr') { ## {{{
             seqnames='chrom',
             start='chromStart', 
             end='chromEnd')
-  for(s in names(subs)) {
-    names(df) = gsub(paste0('^', s, '$'), subs[s], names(df), ignore=TRUE)
-  }
+  
   if(!all(unique(subs) %in% names(df))) {
-    stop('df must have columns chrom, chromStart, chromEnd to proceed')
+    for(s in names(subs)) {
+      names(df) = gsub(paste0('^', s, '$'), subs[s], names(df), ignore=TRUE)
+    }
+    if(!all(unique(subs) %in% names(df))) {
+      stop('df must have columns chrom, chromStart, chromEnd to proceed')
+    }
   }
 
   ## assign genome pre-emptively if possible
@@ -38,11 +41,17 @@ df2GR <- function(df, keepColumns=F, ignoreStrand=F, prefix='chr') { ## {{{
     df$chrom <- toChr(df$chrom, prefix=prefix)
   }
 
+  ## fix starts/ends if necessary 
+  df$chromStart <- as.numeric(df$chromStart)
+  df$chromEnd <- as.numeric(df$chromEnd)
+
   ## fuss about any missing data, which will be dropped presently 
-  if(any(is.na(df$chromStart))) warning('Dropping ranges w/chromStart == NA')
-  if(any(is.na(df$chromEnd))) warning('Dropping ranges w/chromEnd == NA')
-  if(any(is.na(df$chrom))) warning('Dropping ranges w/chrom == NA')
-  df <- subset(df, !is.na(chromStart) & !is.na(chromEnd) & !is.na(chrom))
+  if(any(is.na(df$chromStart))||any(is.na(df$chromEnd))||any(is.na(df$chrom))) {
+    warning('Dropping ranges w/chrom/chromStart/chromEnd == NA')
+    df <- df[ !is.na(df$chrom), ]
+    df <- df[ !is.na(df$chromStart), ]
+    df <- df[ !is.na(df$chromEnd), ]
+  }
 
   ## default is NOT to ignore stranding, but we will if asked
   if(ignoreStrand == FALSE && ("strand" %in% names(df))) {
@@ -50,13 +59,13 @@ df2GR <- function(df, keepColumns=F, ignoreStrand=F, prefix='chr') { ## {{{
       df$strand <- strandMe(df$strand)
     }
     GR <- with(df, GRanges(chrom, 
-                           IRanges(start=chromStart, 
-                                   end=chromEnd), 
+                           IRanges(start=as.numeric(chromStart), 
+                                   end=as.numeric(chromEnd)), 
                            strand=strand))
   } else {
     GR <- with(df, GRanges(chrom, 
-                           IRanges(start=chromStart, 
-                                   end=chromEnd)))
+                           IRanges(start=as.numeric(chromStart), 
+                                   end=as.numeric(chromEnd))))
   }
 
   ## were range names provided?

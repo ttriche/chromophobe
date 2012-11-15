@@ -21,10 +21,10 @@ setMethod('transitions', signature(object='JointSegmentation'), # {{{
           function(object) object@transitions) # }}}
 
 ## retrieve a hard-thresholded segmentation or subset thereof
-setGeneric('segmented', function(object, x, ...) standardGeneric('segmented'))
-setMethod('segmented', signature(object='JointSegmentation', x='character'),#{{{
+setGeneric('segmentation',function(object,x,...)standardGeneric('segmentation'))
+setMethod('segmentation',signature(object='JointSegmentation',x='character'), # {{{
           function(object, x) rowData(object)[[x]]) # }}}
-setMethod('segmented', signature(object='JointSegmentation', x='missing'),#{{{
+setMethod('segmentation',signature(object='JointSegmentation',x='missing'),#{{{
           function(object, x) rowData(object)) # }}}
 
 ## posterior state probabilities: column per cell type, matrix per state?
@@ -43,9 +43,14 @@ setMethod('plot', signature(x='JointSegmentation', y='character'), # {{{
               plotEmissions(emissions(x), ...)
             } else if( y == 'transitions' ) {
               plotTransitions(transitions(x), emissions(x), ...)
+            } else if( y == 'occupancy' ) {
+              plotChromHMM(x, ...)
             } else {
               stop(paste("Don't know how to plot",y,"for a JointSegmentation"))
             }
           }) # }}}
 setMethod('plot', signature(x='JointSegmentation', y='missing'), # {{{
-          function(x, y, ...) plotChromHMM(x, ...)) # }}}
+          function(x, ...) {
+            message('Plotting occupancy; can also choose emissions/transitions')
+            plot(occupancy(x), ...)
+          }) # }}}
