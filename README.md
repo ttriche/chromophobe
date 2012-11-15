@@ -1,16 +1,17 @@
 chromophobe
 ===========
 
-this is a rudimentary R package to handle cell-type and global enrichment plots,
-for segmentations produced by ChromHMM ( http://compbio.mit.edu/ChromHMM/ )
+this is an R package to assist in choosing sane segmentation models, such as 
+those produced by ChromHMM ( http://compbio.mit.edu/ChromHMM/ ). 
 
-perhaps one day it will also run the whole pipeline in parallel via rJava. 
-but, don't hold your breath.  enrichment plots are it for now.
+chromophobe includes a copy of ChromHMM, which is now also on GitHub:
+https://github.com/jernst98/ChromHMM/
+
+Eventually, the goal is to manage the whole pipeline in parallel via rJava. 
 
 NEW NEWS!
 =========
 
-chromophobe now includes the source to ChromHMM, which is now also on GitHub:
-https://github.com/jernst98/ChromHMM/
+ChromHMM itself is now on GitHub at https://github.com/jernst98/ChromHMM/
 
 You probably want to watch/star that repository too, if you're using this one.
