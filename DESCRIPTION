@@ -1,7 +1,7 @@
 Package: chromophobe
 Type: Package
 Title: Plot chromatin state models and enrichments; eventually, build the models
-Version: 0.22
+Version: 0.23
 Date: 2012-11-19
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
@@ -12,29 +12,29 @@ Suggests: Homo.sapiens, VariantAnnotation, Repitools, Gviz, ggbio, rJava, limma
 Enhances: regulatoR
 License: Artistic-2.0
 Collate: df2GR.R
-States-class.R
-Occupancy-class.R
-JointSegmentation-class.R
-importLabelStates.R
-importMarks.R
-importModel.R
-importPosterior.R
-importSegmentation.R
-loadChromHMM.R
-multiplot.R
-parseCommand.R
-pheatmap2.R
-plotChromHMM.R
-plotRanges.R
-plotStates.R
-pyroPlot.R
-SavitzkyGolay.R
-combineSeWithNAs.R
-combine-SummarizedExperiment.R
-sort-SummarizedExperiment.R
-testEnhancers.R
-testPromoters.R
-binmeans.R
-writeBed.R
-writeDelim.R
-writeLabelStates.R
+        States-class.R
+        JointSegmentation-class.R
+        Occupancy-class.R
+        importLabelStates.R
+        importMarks.R
+        importModel.R
+        importPosterior.R
+        importSegmentation.R
+        loadChromHMM.R
+        multiplot.R
+        parseCommand.R
+        pheatmap2.R
+        plotChromHMM.R
+        plotRanges.R
+        plotStates.R
+        pyroPlot.R
+        SavitzkyGolay.R
+        combineSeWithNAs.R
+        combine-SummarizedExperiment.R
+        sort-SummarizedExperiment.R
+        testEnhancers.R
+        testPromoters.R
+        binmeans.R
+        writeBed.R
+        writeDelim.R
+        writeLabelStates.R
