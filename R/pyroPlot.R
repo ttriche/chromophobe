@@ -31,11 +31,16 @@ pyroPlot <- function(SE, GRL, groupBy=NULL, assay=NULL, withNormals=T, tidy=F) {
     SEs <- lapply(SEs, function(x) list(wildtype=x))
   } # }}}
 
+  ## probably best to split columns, split rows, and grid them out 
+  ##
+
   ## we end up with SEs = list(Normal=list('xxx mutant'=SE, 'xxx wildtype'=SE),
   ##                            Tumor=list('xxx mutant'=SE, 'xxx wildtype'=SE) )
   ## or just {Tumor, Normal}{wildtype, mutant} with empties. 
+  ##
 
   ## reorder samples in each group based on the mean value across features
+  ##
   browser()
   SEs <- lapply(SEs, function(x) 
                 lapply(x, function(y) y[,order(colMeans(asy.fast(y, assay)))]))
@@ -44,11 +49,6 @@ pyroPlot <- function(SE, GRL, groupBy=NULL, assay=NULL, withNormals=T, tidy=F) {
   browser()
   GRL <- subsetByOverlaps(GRL, rowData(SE))
   splitSEs <- lapply(SEs, function(x) lapply(x, function(y) byList(y, GRL)))
-
-
-
-
-
 
   ## now pull out the betas and plot them, split, by status: N, T-wt, T-mut
 

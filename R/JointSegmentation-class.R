@@ -2,8 +2,15 @@
 setClass('JointSegmentation', # {{{ a tweaked SummarizedExperiment
          representation(probinit='data.frame',
                         emissions='data.frame', 
-                        transitions='matrix'),
+                        transitions='matrix',
+                        states='States'),
          contains="SummarizedExperiment") # }}}
+
+## state labels, colors, etc.
+# setGeneric('states', function(object, ...) # {{{ (set in States-class.R) 
+# standardGeneric('states'))  # }}}
+setMethod('states', signature(object='JointSegmentation'), # {{{
+          function(object) states(object@states)) # }}}
 
 ## iniial state probabilities
 setGeneric('probinit', function(object, ...) standardGeneric('probinit')) 

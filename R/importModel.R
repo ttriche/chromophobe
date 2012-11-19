@@ -1,5 +1,7 @@
 importModel <- function(file, states=NULL, loud=FALSE) {
 
+  stopifnot(class(states) == 'States')
+
   if(loud) message(paste('Importing model parameters from', file, '...'))
 
   require(utils)
@@ -18,14 +20,15 @@ importModel <- function(file, states=NULL, loud=FALSE) {
   names(probinit) <- c('state','p')
   if(is.null(states)) states <- getStates(probinit)
   else message('Collapsing states has not been debugged -- you are warned!')
-  probinit$state <- with(probinit, factor(states[as.numeric(state)]))
+  probinit$state <- with(probinit,factor(stateNames(states)[as.numeric(state)]))
   probinit$p <- as.numeric(probinit$p) 
   model.pieces$probinit <- probinit
 
   ## emission probabilities
   emissions <- model.pieces$emissionprobs[,-1]
   names(emissions) <- c('state','id','mark','keep','p')
-  emissions$state <- with(emissions, factor(states[as.numeric(state)]))
+  emissions$state <- with(emissions, 
+                          factor(stateNames(states)[as.numeric(state)]))
   emissions$mark <- with(emissions, factor(mark, labels=unique(mark)))
   emissions$p <- as.numeric(emissions$p)
   emissions <- emissions[ emissions$keep==1, c('state','mark','p') ]

@@ -17,8 +17,8 @@ setMethod('occupancy', signature(object='JointSegmentation', x='GenomicRanges'),
 setMethod('occupancy', signature(object='GRangesList', x='missing'),#{{{
           function(object) { 
             states <- levels(mcols(object[[1]])[,'state'])
-            stopifnot(all(unlist(lapply(object, function(x) 
-                          identical(states, levels(mcols(x)[,'state']))))))
+#            stopifnot(all(unlist(lapply(object, function(x) 
+#                          identical(states, levels(mcols(x)[,'state']))))))
             d <- DataFrame(lapply(names(object), function(m) 
                                   occupancy(object[[m]])))
             names(d) <- names(object)
@@ -67,7 +67,9 @@ setMethod('occupancy', signature(object='GRanges', x='GRanges'),#{{{
 
 ## should speed things up... a little...
 setMethod('plot', signature(x='Occupancy', y='missing'), # {{{
-          function(x, ...) {
+          function(x, ...) plotOccupancy(x)) # }}}
+
+plotOccupancy <- function(x) { # {{{
   require(ggplot2)
   title <- paste('Occupancy by state')
   x[,'state'] <- factor(rownames(x))
@@ -86,4 +88,4 @@ setMethod('plot', signature(x='Occupancy', y='missing'), # {{{
          xlab('Cell type') + 
          ggtitle(title)
   return(p)  
-}) # }}}
+} # }}}
