@@ -1,7 +1,5 @@
 importModel <- function(file, states=NULL, loud=FALSE) {
 
-  stopifnot(class(states) == 'States')
-
   if(loud) message(paste('Importing model parameters from', file, '...'))
 
   require(utils)
@@ -18,8 +16,13 @@ importModel <- function(file, states=NULL, loud=FALSE) {
   ## initial state probabilities
   probinit <- model.pieces$probinit[,2:3]
   names(probinit) <- c('state','p')
-  if(is.null(states)) states <- getStates(probinit)
-  else message('Collapsing states has not been debugged -- you are warned!')
+  if(is.null(states)) {
+    Id <- getStates(probinit)
+    Name <- paste0('E', Id)
+    states <- States(DataFrame(Id, Name))
+  } else {
+    message('Collapsing model states has not been debugged -- you are warned!')
+  }
   probinit$state <- with(probinit,factor(stateNames(states)[as.numeric(state)]))
   probinit$p <- as.numeric(probinit$p) 
   model.pieces$probinit <- probinit
@@ -43,6 +46,9 @@ importModel <- function(file, states=NULL, loud=FALSE) {
   transitions <- transitions[, c('from','to','p')]
   model.pieces$transitions <- acast(transitions, to ~ from, value.var='p')
 
-  return(model.pieces[ c('probinit','emissions','transitions')])
+  ## model states 
+  model.pieces$states <- states
+
+  return(model.pieces[ c('probinit','emissions','transitions','states')])
 
 }

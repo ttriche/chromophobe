@@ -10,10 +10,15 @@ importSegmentation <- function(file,
   if(!is.null(states)) {
     stopifnot(class(states) == 'States')
     if(all(levels(mcols(x)[, statecol]) %in% stateIds(states))) {
-      levels(mcols(x)[,statecol]) <- stateNames(states)[levels(mcols(x)[,statecol])]
+      lvls <- stateNames(states)[levels(mcols(x)[,statecol])]
+      levels(mcols(x)[,statecol]) <- lvls
     } else {
       message("The HMM has more states than you supplied, or different names:")
-      stop(paste(setdiff(levels(mcols(x)[,statecol]),names(states)), coll=','))
+      browser()
+      message('Supplied states: ', paste(stateIds(states), collapse=', '))
+      message('Supplied state names: ',paste(stateNames(states), collapse=', '))
+      message('Model states: ',paste(levels(mcols(x)[,statecol]),collapse=', '))
+      stop()
     }
   }
   if(!is.null(genome)) {
@@ -24,5 +29,5 @@ importSegmentation <- function(file,
     message('You did not specify a genome -- this could cause trouble later on')
   }
   names(mcols(x))[which(names(mcols(x))==statecol)] <- 'state'
-  return(x)
+  return(as(x, 'Segmentation'))
 }

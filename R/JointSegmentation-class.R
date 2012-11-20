@@ -1,16 +1,26 @@
+setClassUnion('StatesOrNULL', c('NULL','States')) ## for loadChromHMM
+
 ## generic container for joint segmentations, inherits from SE
 setClass('JointSegmentation', # {{{ a tweaked SummarizedExperiment
          representation(probinit='data.frame',
                         emissions='data.frame', 
                         transitions='matrix',
-                        states='States'),
+                        states='StatesOrNULL'),
          contains="SummarizedExperiment") # }}}
 
-## state labels, colors, etc.
 # setGeneric('states', function(object, ...) # {{{ (set in States-class.R) 
 # standardGeneric('states'))  # }}}
 setMethod('states', signature(object='JointSegmentation'), # {{{
-          function(object) states(object@states)) # }}}
+          function(object) object@states) # }}}
+
+setGeneric('states<-', function(object, value, ...) # {{{
+  standardGeneric('states<-'))  # }}}
+setMethod('states<-', signature(object='JointSegmentation',value='States'), #{{{
+          function(object, value) {
+            message('This method ought to check states & reassign/re-name them')
+            object@states <- value
+            return(object)
+          }) # }}}
 
 ## iniial state probabilities
 setGeneric('probinit', function(object, ...) standardGeneric('probinit')) 
