@@ -1,3 +1,5 @@
+require(GenomicRanges)
+
 fromChr <- function(seqs, prefix='chr') { # {{{
   for(i in rev(seq_len(nchar(prefix)))) {
     seqs <- gsub(paste0('^', substr(prefix, 1, i)), '', seqs)

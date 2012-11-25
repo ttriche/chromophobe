@@ -1,29 +1,31 @@
 Package: chromophobe
 Type: Package
 Title: Plot chromatin state models and enrichments; eventually, build the models
-Version: 0.25
-Date: 2012-11-20
+Version: 0.26
+Date: 2012-11-25
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Generate plots from ChromHMM and similar chromatin state models
-Depends: GenomicRanges (>= 1.10), reshape2, ggplot2, pheatmap 
+Depends: GenomicRanges (>= 1.10), VariantAnnotation, reshape2, ggplot2, pheatmap
 Imports: Matrix, GenomicRanges, GenomicFeatures, rtracklayer
-Suggests: Homo.sapiens, VariantAnnotation, Repitools, Gviz, ggbio, rJava, limma
+Suggests: Homo.sapiens, GenometriCorr, Gviz, ggbio, rJava, netresponse
 Enhances: regulatoR
 License: Artistic-2.0
 Collate: df2GR.R
         States-class.R
         Segmentation-class.R
+        SegmentationList-class.R
         JointSegmentation-class.R
         Occupancy-class.R
+        TrackHubSession-class.R
         importLabelStates.R
         importMarks.R
         importModel.R
-        importPosterior.R
         importSegmentation.R
+        importPosterior.R
+        parseCommand.R
         loadChromHMM.R
         multiplot.R
-        parseCommand.R
         pheatmap2.R
         plotChromHMM.R
         plotRanges.R
@@ -33,8 +35,9 @@ Collate: df2GR.R
         combineSeWithNAs.R
         combine-SummarizedExperiment.R
         sort-SummarizedExperiment.R
-        testEnhancers.R
         testPromoters.R
+        testTranscription.R
+        testEnhancers.R
         binmeans.R
         writeBed.R
         writeDelim.R
