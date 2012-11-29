@@ -1,16 +1,15 @@
 require(rtracklayer)
 
+setClass("TrackHub", 
+         representation(hubUrl = "character",
+                        hubName = "character",
+                        hubNotes = "SimpleList"))
+
 setClass("TrackHubSession",
-         representation(url = "character", 
-                        hubUrl = "character",
-                        hguid = "numeric",
-                        views = "environment"),
-         contains = "UCSCSession")
+         contains = c("UCSCSession","TrackHub"))
 
 setClass("TrackHubQuery",
          representation(session = "TrackHub",
-                        track = "characterORNULL",
-                        table = "characterORNULL",
                         range = "GRanges",
                         outputType = "characterORNULL",
                         NAMES = "characterORNULL",
