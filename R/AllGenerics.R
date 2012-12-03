@@ -231,12 +231,16 @@ setMethod("combine", signature=signature(x="SummarizedExperiment",
               )
           }) # }}}
 
-setMethod("keepSeqlevels", # {{{
-          signature(x="SummarizedExperiment", value="ANY"), 
-          function(x, value) {
+setMethod("keepSeqlevels", signature(x="SummarizedExperiment", value="ANY"),
+          function(x, value) { # {{{
             y <- which(rownames(x) %in% names(keepSeqlevels(rowData(x),value)))
             return(x[y, ])
           }) # }}}
 
-setMethod("sort", signature(x="SummarizedExperiment"), # {{{
-          function(x) x[ names(sort(rowData(x))), ] ) # }}}
+setMethod("sort", signature(x="SummarizedExperiment"),
+          function(x) { # {{{ 
+            x[ names(sort(rowData(x))), ]  
+          }) # }}}
+
+setGeneric("tabplot", function(dat, ...) standardGeneric('tabplot'))
+## methods are defined in tabplot.R

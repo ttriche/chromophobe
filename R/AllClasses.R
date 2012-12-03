@@ -33,15 +33,12 @@ setAs("GRanges", "Segmentation", function(from) { # {{{
   return(from)
 }) # }}}
 
-setClass("SegmentationList", contains="GRangesList", 
-    # {{{ a GRangesList w/Segmentation elements 
-    prototype(elementType="Segmentation"),
-) # }}}
+setClass("SegmentationList", contains="GRangesList")
 SegmentationList <- function(...) { # {{{
     as(GRangesList(list(...)), 'SegmentationList')
 } # }}}
 setAs("GRangesList", "SegmentationList", function(from) { # {{{
-  from <- seqapply(from, function(x) {
+  from <- endoapply(from, function(x) {
     class(x) <- 'Segmentation'
     return(x)    
   }) 
@@ -72,12 +69,7 @@ setClass("TrackHub",
                         hubName = "character",
                         hubNotes = "SimpleList")) # }}}
 
-setClass("TrackHubQuery", contains = "UCSCTableQuery", 
-         representation(session = "TrackHub", # {{{
-                        range = "GRanges",
-                        outputType = "characterORNULL",
-                        NAMES = "characterORNULL",
-                        intersectTrack = "characterORNULL")) # }}}
+setClass("TrackHubQuery", contains = "UCSCTableQuery")
 
 setClass("TrackHubSession", contains = c("UCSCSession","TrackHub")) 
 TrackHubSession <- function(hubUrl, ... ) { # {{{
