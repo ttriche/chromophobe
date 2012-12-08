@@ -138,6 +138,20 @@ public class Preprocessing
           boolean bdatafound = false;
 
 	  ArrayList alfiles = (ArrayList) hmfiles.get(szcell+"\t"+marks[nmark]);
+	  
+	  if ((nummarks == 1)&&(bcontrol))
+	  {
+	      //this code was added in version 1.04 to handle the situation in which there is a missing mark 
+	      //in the first position, but control data can be listed elsewhere
+	      //trying to find a listing where control data is available.
+	      int nfilemark = 1;
+	      while ((alfiles == null)&&(nfilemark < marks.length))
+	      {
+	         //only one control for the cell looking for a valid one  
+	         alfiles = (ArrayList) hmfiles.get(szcell+"\t"+marks[nfilemark]);		
+		 nfilemark++;
+	      }
+	  }
 
 	  if (alfiles == null)
 	  {
@@ -151,16 +165,16 @@ public class Preprocessing
 	     }
 
 	     bpresentmarks[nmark] = false;
-             for (int nchrom = 0; nchrom < grid.length; nchrom++)
-             {
-                int[][] grid_nchrom = grid[nchrom];
-	        int numbins = grid_nchrom.length;
-	        for (int nbin = 0; nbin < numbins; nbin++)
-	        {
-                   int[] grid_nchrom_nbin = grid_nchrom[nbin];
-		   if (!bcontrol)
+	     if (!bcontrol)
+	     {
+		 //slight efficiency improvement here in v1.04
+                for (int nchrom = 0; nchrom < grid.length; nchrom++)
+                {
+                   int[][] grid_nchrom = grid[nchrom];
+	           int numbins = grid_nchrom.length;
+	           for (int nbin = 0; nbin < numbins; nbin++)
 	           {
-		      grid_nchrom_nbin[nmark] = -1;		  
+		       grid_nchrom[nbin][nmark] = -1;		   
 		   }
 		}
 	     } 		               
@@ -234,7 +248,7 @@ public class Preprocessing
 				    throw new IllegalArgumentException(szstrand+" is an invalid strand!");
 				}
 			     }
-		   
+ 		   
 		             if ((nbin>=0)&&(nbin < grid[nchrom].length))
 	                     {
 		                //increment bin count if falls into valid interval

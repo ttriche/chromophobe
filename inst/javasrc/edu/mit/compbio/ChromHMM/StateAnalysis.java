@@ -142,7 +142,9 @@ public class StateAnalysis
 	}
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
     static void makeEnrichmentHeatMap(double[][] heatmapfold, String[] xlabels, String[] ylabels,String szoutfileprefix,Color theColor,
 				      String sztitle,String szxaxis,String szyaxis) throws IOException
@@ -157,9 +159,9 @@ public class StateAnalysis
        map.setXValues(xlabels);
        map.setYValues(ylabels);
        map.setHighValueColour(theColor);
-       map.setAxisValuesFont(new Font("Arial",0,20));
-       map.setAxisLabelsFont(new Font("Arial",0,22));
-       map.setTitleFont(new Font("Arial",0,24));
+       map.setAxisValuesFont(new Font("SansSerif",0,20));
+       map.setAxisLabelsFont(new Font("SansSerif",0,22));
+       map.setTitleFont(new Font("SansSerif",0,24));
        map.saveToFile(new File(szoutfileprefix+".png"));	
        Util.printImageToSVG(map, szoutfileprefix+".svg");
        System.out.println("Writing to file "+szoutfileprefix+".png");
@@ -193,7 +195,7 @@ public class StateAnalysis
       public static void enrichmentPosterior(String szposteriordir,String szcell,String szinputcoorddir, String szinputcoordlist,
 					    int noffsetleft, int noffsetright, int nbinsize,
 					    boolean bcenter,boolean bunique, boolean busesignal,String szcolfields,boolean bbaseres, 
-					     String szoutfile,boolean bcolscaleheat, Color theColor,String sztitle) throws IOException
+					     String szoutfile,boolean bcolscaleheat, Color theColor,String sztitle,String szlabelmapping) throws IOException
     {
 
 	String szLine;
@@ -387,7 +389,7 @@ public class StateAnalysis
 		         int nintervalend = -1;
 		         boolean bdone = false;
 
-		         for (int nindex = 0; nindex <= alrecA.length; nindex++)
+		         for (int nindex = 0; ((nindex <= alrecA.length)&&(alrecA.length>0)); nindex++)
 		         {
 			    int ncurrstart=-1;
 			    int ncurrend=-1;
@@ -448,7 +450,7 @@ public class StateAnalysis
 			          //dendfrac represents the fraction of bases after the end position in the interval
 			          double dendfrac = ((nend+1)*nbinsize-nintervalend-1)/(double) nbinsize;
 
-			          if (nbegin < posterior.length)
+			          if ((nbegin < posterior.length)&&(dbeginfrac>0))
 		                  { 
 				     //only removing if it would of made it into the actual posterior counts
 				     float[] posterior_nbegin = posterior[nbegin];
@@ -458,7 +460,7 @@ public class StateAnalysis
 			      	     }
 				  }
 
-                                  if (nend < posterior.length)
+                                  if ((nend < posterior.length)&&(dendfrac >0))
 		                  {
 				     //only removing if it would of made it into the actual posterior counts		          
 				     float[] posterior_nend = posterior[nend];
@@ -536,7 +538,7 @@ public class StateAnalysis
 	                             double dbeginfrac = (nbeginactual - nbegin*nbinsize)/(double) nbinsize;
 	                             double dendfrac = ((nend+1)*nbinsize-nendactual-1)/(double) nbinsize;
 
-				     if (nbegin< posterior.length)
+				     if ((nbegin< posterior.length)&&(dbeginfrac>0))
 				     {
 				        //only removing if it would of made it into the actual posterior counts
 				        float[] posterior_nbegin = posterior[nbegin];
@@ -546,7 +548,7 @@ public class StateAnalysis
 					}
 				     }			          
 			          	
-				     if (nend < posterior.length)
+				     if ((nend < posterior.length)&&(dendfrac>0))
 				     {
 				         //only removing if it would of made it into the actual posterior counts		          
 				        float[] posterior_nend = posterior[nend];
@@ -587,7 +589,8 @@ public class StateAnalysis
 
 
 
-	outputenrichment(szoutfile, files,tallyoverlaplabel, tallylabel, dsumoverlaplabel,theColor,bcolscaleheat,ChromHMM.convertCharOrderToStringOrder(chorder),sztitle,1); 
+	outputenrichment(szoutfile, files,tallyoverlaplabel, tallylabel, dsumoverlaplabel,theColor,bcolscaleheat,ChromHMM.convertCharOrderToStringOrder(chorder),
+			 sztitle,1,szlabelmapping,chorder); 
 
     }
 
@@ -612,7 +615,7 @@ public class StateAnalysis
      public static void enrichmentMax(String szinputsegment,String szinputcoorddir,String szinputcoordlist,
 				     int noffsetleft, int noffsetright,
                                      int nbinsize, boolean bcenter,boolean bunique, boolean busesignal,String szcolfields,
-				      boolean bbaseres, String szoutfile,boolean bcolscaleheat,Color theColor,String sztitle) throws IOException
+				      boolean bbaseres, String szoutfile,boolean bcolscaleheat,Color theColor,String sztitle, String szlabelmapping) throws IOException
     {
 	
 	ArrayList alsegments = new ArrayList(); //stores all the segments
@@ -835,7 +838,7 @@ public class StateAnalysis
 		  int nintervalend = -1;
 		  boolean bdone = false;
 
-		  for (int nindex = 0; nindex <= alrecA.length; nindex++)
+		  for (int nindex = 0; (nindex <= alrecA.length&&(alrecA.length>0)); nindex++)
 		  {
 		      int ncurrstart=-1;
 		      int ncurrend=-1;
@@ -857,7 +860,7 @@ public class StateAnalysis
 		        else if (ncurrstart <= nintervalend)
 		        {
 			    //this read is still in the active interval
-			    //extending the current active interval interval
+			    //extending the current active interval 
 		           if (ncurrend > nintervalend)
 		           {
 		              nintervalend = ncurrend;
@@ -895,15 +898,15 @@ public class StateAnalysis
 			   
 			   //dendfrac represents the fraction of bases after the end position in the interval
 	                   double dendfrac = ((nend+1)*nbinsize-nintervalend-1)/(double) nbinsize;
-
-			   if ((nbegin < labels_nchrom.length)&&(labels_nchrom[nbegin]>=0))
+			   
+			   if ((nbegin < labels_nchrom.length)&&(labels_nchrom[nbegin]>=0)&&(dbeginfrac>0))
 		           { 
 			      
 		              //only counted the bases if nbegin was less than labels_nchrom.length  
 		              tallyoverlaplabel_nfile[labels_nchrom[nbegin]]-=dbeginfrac;
 		           }
 
-                           if ((nend < labels_nchrom.length)&&(labels_nchrom[nend]>=0))
+                           if ((nend < labels_nchrom.length)&&(labels_nchrom[nend]>=0)&&(dendfrac>0))
 		           {
 		              //only counted the bases if nend was less than labels_nchrom.length  
 		              tallyoverlaplabel_nfile[labels_nchrom[nend]]-=dendfrac;
@@ -986,13 +989,13 @@ public class StateAnalysis
 			   //dendfrac represents the fraction of bases after the end position in the interval
 	                   double dendfrac = ((nend+1)*nbinsize-nendactual-1)/(double) nbinsize;
 
-			   if ((nbegin < labels_nchrom.length)&&(labels_nchrom[nbegin]>=0))
+			   if ((nbegin < labels_nchrom.length)&&(labels_nchrom[nbegin]>=0)&&(dbeginfrac>0))
 			   { 
 			      //only counted the bases if nbegin was less than labels_nchrom.length  
 			      tallyoverlaplabel_nfile[labels_nchrom[nbegin]]-=damount*dbeginfrac;
 			   }
 
-                           if ((nend < labels_nchrom.length)&&(labels_nchrom[nend]>=0))
+                           if ((nend < labels_nchrom.length)&&(labels_nchrom[nend]>=0)&&(dendfrac>0))
 		           {
 			      //only counted the bases if nend was less than labels_nchrom.length  
 			      tallyoverlaplabel_nfile[labels_nchrom[nend]]-=damount*dendfrac;
@@ -1016,9 +1019,35 @@ public class StateAnalysis
 	}
 
 	outputenrichment(szoutfile, files,tallyoverlaplabel, tallylabel, dsumoverlaplabel,theColor,
-			 bcolscaleheat,ChromHMM.convertCharOrderToStringOrder(szlabel.charAt(0)),sztitle,0);
+			 bcolscaleheat,ChromHMM.convertCharOrderToStringOrder(szlabel.charAt(0)),sztitle,0,szlabelmapping,szlabel.charAt(0));
     }
 
+    /////////////////////////////////////////////////////////////////
+    /**
+     * Loads contents of szlabelmapping into a HashMap
+     */
+    private static HashMap makeLabelMapping(String szlabelmapping) throws IOException
+    {
+	HashMap hmlabelExtend = new HashMap();
+	if (szlabelmapping != null)
+	{
+           BufferedReader bridlabel =  Util.getBufferedReader(szlabelmapping);
+	   String szLine;
+
+	   //Loading in a mapping from state ID to a label description
+
+	   while ((szLine = bridlabel.readLine())!=null)
+           {
+	      StringTokenizer st = new StringTokenizer(szLine,"\t");
+	      String szID = st.nextToken();
+	      String szLabelExtend = st.nextToken();
+	      hmlabelExtend.put(szID,szLabelExtend);
+	   }
+	   bridlabel.close();
+	}
+
+	return hmlabelExtend;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /**
@@ -1026,8 +1055,10 @@ public class StateAnalysis
      */
     private static void outputenrichment(String szoutfile,String[] files,double[][] tallyoverlaplabel, 
                                          double[] tallylabel, double[] dsumoverlaplabel,Color theColor,
-                                         boolean bcolscaleheat,String szstateorder,String sztitle, int noffset) throws IOException
+                                         boolean bcolscaleheat,String szstateorder,String sztitle, int noffset,String szlabelmapping,char chorder) throws IOException
      {
+
+	HashMap hmlabelExtend = makeLabelMapping(szlabelmapping);
 
 	double dsumlabel = 0;
 	for (int ni = 0; ni < tallylabel.length; ni++)
@@ -1070,6 +1101,13 @@ public class StateAnalysis
 	    if (tallylabel[nstate] > 0)
 	    {
 		pw.print(nstate+noffset);
+                String szsuffix;
+
+                if ((szsuffix = (String) hmlabelExtend.get(""+chorder+(nstate+noffset)))!=null)
+		{
+	      	   pw.print("_"+szsuffix);
+	        }
+
 		if (bcolscaleheat)
 		{
 		    //only include genome % if scaling by column
@@ -1133,6 +1171,15 @@ public class StateAnalysis
 	    {
 		rowlabels[ni] = ""+(ni+noffset);
 	    }
+	}
+
+	for (int ni = 0; ni < rowlabels.length; ni++)
+	{
+	   String szsuffix;
+	   if ((szsuffix = (String) hmlabelExtend.get(""+chorder+rowlabels[ni]))!=null)
+           {
+       	      rowlabels[ni] = rowlabels[ni]+"_"+szsuffix;
+	   }
 	}
 
 	if (bcolscaleheat)
@@ -1302,11 +1349,12 @@ public class StateAnalysis
      * szoutfile - the name of the text file for which the enrichments should be displayed
      * heatmaps are written to the same place with the extensions '.png' and '.svg'
      * theColor - theColor to use for the heatmap program
-     */
+     */ 
      public static void neighborhoodMax(String szinputsegmentation,String szanchorpositions,
                                        int nbinsize, int numleft, int numright, int nspacing, 
 					boolean busestrand, boolean busesignal, String szcolfields,
-					int noffsetanchor, String szoutfile,Color theColor, String sztitle) throws IOException
+					int noffsetanchor, String szoutfile,Color theColor, 
+					String sztitle,String szlabelmapping) throws IOException
     {
 	//stores all the segments in the data
 	ArrayList alsegments = new ArrayList();
@@ -1424,7 +1472,7 @@ public class StateAnalysis
 
 	RecAnchorIndex theAnchorIndex = getAnchorIndex(szcolfields, busestrand, busesignal);
 
-	//reads in the anhcor position and 
+	//reads in the anchor position 
         BufferedReader brcoords = Util.getBufferedReader(szanchorpositions);
 	while ((szLine = brcoords.readLine())!=null)
         {
@@ -1447,7 +1495,7 @@ public class StateAnalysis
 	      }
 	      else
 	      {
-      	         throw new IllegalArgumentException(szstrand +" is an valid strand. Strand should be '+' or '-'");
+      	         throw new IllegalArgumentException(szstrand +" is an invalid strand. Strand should be '+' or '-'");
 	      }	      
 	   }
 
@@ -1502,7 +1550,7 @@ public class StateAnalysis
         brcoords.close(); 	    
 
 	outputneighborhood(tallyoverlaplabel,tallylabel,dsumoverlaplabel,szoutfile,nspacing,numright,
-                           numleft,theColor,ChromHMM.convertCharOrderToStringOrder(szlabel.charAt(0)),sztitle,0);
+                           numleft,theColor,ChromHMM.convertCharOrderToStringOrder(szlabel.charAt(0)),sztitle,0,szlabelmapping,szlabel.charAt(0));
     }
 
 
@@ -1531,7 +1579,7 @@ public class StateAnalysis
      */
      public static void neighborhoodSignal(String szposteriordir,String szcell,String szanchorpositions, int nbinsize, int numleft, int numright, int nspacing,
 					     boolean busestrand, boolean busesignal,String szcolfields, int noffsetanchor,
-					      String szoutfile,Color theColor,String sztitle) throws IOException
+					   String szoutfile,Color theColor,String sztitle,String szlabelmapping) throws IOException
     {
 	//posterior here is really signal just using equivalent variable names
 	//list of possible posterior files
@@ -1731,7 +1779,7 @@ public class StateAnalysis
 	}   
  
 	outputneighborhoodsignal(tallyoverlaplabel,tallylabel,dsumoverlaplabel,numlocs,szoutfile,nspacing,numright,
-				 numleft,theColor,ChromHMM.convertCharOrderToStringOrder(chorder),sztitle,szmarknames);
+				 numleft,theColor,ChromHMM.convertCharOrderToStringOrder(chorder),sztitle,szmarknames,szlabelmapping,chorder);
     }
 
 
@@ -1760,7 +1808,7 @@ public class StateAnalysis
      */
      public static void neighborhoodPosterior(String szposteriordir,String szcell,String szanchorpositions, int nbinsize, int numleft, int numright, int nspacing,
 					     boolean busestrand, boolean busesignal,String szcolfields, int noffsetanchor,
-					      String szoutfile,Color theColor,String sztitle) throws IOException
+					      String szoutfile,Color theColor,String sztitle,String szlabelmapping) throws IOException
     {
 
 	//list of possible posterior files
@@ -1957,21 +2005,23 @@ public class StateAnalysis
 	}   
  
 	outputneighborhood(tallyoverlaplabel,tallylabel,dsumoverlaplabel,szoutfile,nspacing,numright,
-                           numleft,theColor,ChromHMM.convertCharOrderToStringOrder(chorder),sztitle,1);
+                           numleft,theColor,ChromHMM.convertCharOrderToStringOrder(chorder),sztitle,1,szlabelmapping,chorder);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * This handles outputing to text and heatmap form the fold enrichments tally info
+     * This handles outputing to text and heatmap from the fold enrichments tally info
      */
      private static void outputneighborhoodsignal(double[][] tallyoverlaplabel, double[] tallylabel, double[] dsumoverlaplabel, double dsumlabel, String szoutfile,
-				int nspacing, int numright, int numleft, Color theColor, String szstateorder,String sztitle,String szmarknames) throws IOException
+						  int nspacing, int numright, int numleft, Color theColor, String szstateorder,String sztitle,String szmarknames,
+						  String szlabelmapping, char chorder) throws IOException
     {
         NumberFormat nf5 = NumberFormat.getInstance();
         nf5.setMaximumFractionDigits(5);
 	nf5.setGroupingUsed(false);
 	nf5.setMinimumFractionDigits(5);
  	    
+	HashMap hmlabelExtend = makeLabelMapping(szlabelmapping);
 
 	String[] collabels = new String[tallyoverlaplabel.length];
 	System.out.println("Writing to file "+szoutfile+".txt");
@@ -2001,6 +2051,12 @@ public class StateAnalysis
 	    {
 		//state actually occurs
 		pw.print((nstate+1));
+		String szsuffix;
+		if ((szsuffix = (String) hmlabelExtend.get(""+chorder+(nstate+1)))!=null)
+		{
+		    pw.print("_"+szsuffix);
+		}
+
 		for (int nfile = 0; nfile < tallyoverlaplabel.length; nfile++)
 	        {
 		    //the numerator is the fraction of the signal at this relative anchor assigned to this state
@@ -2055,6 +2111,15 @@ public class StateAnalysis
 	}
 
 
+        for (int ni = 0; ni < rowlabels.length; ni++)
+	{
+	   String szsuffix;
+	   if ((szsuffix = (String) hmlabelExtend.get(""+chorder+rowlabels[ni]))!=null)
+           {
+	      rowlabels[ni] = rowlabels[ni]+"_"+szsuffix;
+           }
+        }
+
 	makeEnrichmentHeatMap(heatmapfold, collabels, rowlabels,szoutfile,theColor,sztitle,"Position","State ("+szstateorder+" order)");
     }
 
@@ -2065,13 +2130,15 @@ public class StateAnalysis
      */
     private static void outputneighborhood(double[][] tallyoverlaplabel, double[] tallylabel, double[] dsumoverlaplabel, String szoutfile,
 					   int nspacing, int numright, int numleft, Color theColor, String szstateorder,String sztitle,
-                                           int noffset) throws IOException
+                                           int noffset, String szlabelmapping, char chorder) throws IOException
     {
         NumberFormat nf5 = NumberFormat.getInstance();
         nf5.setMaximumFractionDigits(5);
 	nf5.setGroupingUsed(false);
 	nf5.setMinimumFractionDigits(5);
  	    
+	HashMap hmlabelExtend = makeLabelMapping(szlabelmapping);
+
 	//computes the total sum of signal each position, but summing over the 
 	//signal at each state at that position
         for (int npos = 0; npos < tallyoverlaplabel.length; npos++)
@@ -2116,6 +2183,12 @@ public class StateAnalysis
 	    {
 		//state actually occurs
 		pw.print((nstate+noffset));
+                String szsuffix;
+                if ((szsuffix = (String) hmlabelExtend.get(""+chorder+(nstate+noffset)))!=null)
+		{
+	      	   pw.print("_"+szsuffix);
+	        }
+
 		for (int nfile = 0; nfile < tallyoverlaplabel.length; nfile++)
 	        {
 		    //the numerator is the fraction of the signal at this relative anchor assigned to this state
@@ -2168,6 +2241,14 @@ public class StateAnalysis
 	    }
 	}
 
+        for (int ni = 0; ni < rowlabels.length; ni++)
+	{
+     	   String szsuffix;
+	   if ((szsuffix = (String) hmlabelExtend.get(chorder+rowlabels[ni]))!=null)
+	   {
+	      rowlabels[ni] = rowlabels[ni]+"_"+szsuffix;
+           }
+        }
 
 	makeEnrichmentHeatMap(heatmapfold, collabels, rowlabels,szoutfile,theColor,sztitle,"Position","State ("+szstateorder+" order)");
     }
@@ -2397,9 +2478,9 @@ public class StateAnalysis
 
         map.setTitle("Best Emission Parameter Correlation");
         map.setXAxisLabel("Number of States in Model");
-	map.setAxisValuesFont(new Font("Arial",0,20));
-	map.setAxisLabelsFont(new Font("Arial",0,22));
-	map.setTitleFont(new Font("Arial",0,24));
+	map.setAxisValuesFont(new Font("SansSerif",0,20));
+	map.setAxisLabelsFont(new Font("SansSerif",0,22));
+	map.setTitleFont(new Font("SansSerif",0,24));
         map.setYAxisLabel(szaxis);
         map.setXValues(collabels);
         map.setYValues(rowlabels);
