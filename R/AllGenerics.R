@@ -222,8 +222,11 @@ setMethod("combine", signature=signature(x="SummarizedExperiment",
               names(commonAsys) <- commonAsys
               if(length(commonAsys) < 1) stop('Error: no assays in common')
               combineAssay <- function(assay, x, y) {
-                cbind( assays(x, withDimnames=F)[[assay]],
-                       assays(y[rownames(x), ], withDimnames=F)[[assay]] )
+                asy <- cbind(assays(x, withDimnames=F)[[assay]],
+                             assays(y[rownames(x), ], withDimnames=F)[[assay]])
+                colnames(asy) <- c(colnames(x), colnames(y))
+                rownames(asy) <- rownames(x)
+                return(asy)
               }
               SummarizedExperiment(
                 assays=lapply(commonAsys, combineAssay, x=x, y=y),
