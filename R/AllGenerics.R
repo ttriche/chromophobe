@@ -219,20 +219,21 @@ setMethod("combine", signature=signature(x="SummarizedExperiment",
               }
               commonAsys <- intersect(names(assays(x, withDimnames=FALSE)), 
                                       names(assays(y, withDimnames=FALSE)))
-              names(commonAsys) <- commonAsys
               if(length(commonAsys) < 1) stop('Error: no assays in common')
-              combineAssay <- function(assay, x, y) {
-                asy <- cbind(assays(x, withDimnames=F)[[assay]],
-                             assays(y[rownames(x), ], withDimnames=F)[[assay]])
-                colnames(asy) <- c(colnames(x), colnames(y))
-                rownames(asy) <- rownames(x)
-                return(asy)
+              else names(commonAsys) <- commonAsys
+
+              combineAssay <- function(asy, x, y) {
+                cbind(assays(x)[[asy]], assays(y[rownames(x), ])[[asy]])
               }
-              SummarizedExperiment(
+
+              SE <- SummarizedExperiment(
                 assays=lapply(commonAsys, combineAssay, x=x, y=y),
-                colData=merge(colData(x), colData(y), all=TRUE),
+                colData=merge(colData(x), colData(y), all=T, sort=F),
                 rowData=rowData(x)
               )
+              colnames(SE) <- c(colnames(x), colnames(y))
+              return(SE)
+
           }) # }}}
 
 setMethod("keepSeqlevels", signature(x="SummarizedExperiment", value="ANY"),
