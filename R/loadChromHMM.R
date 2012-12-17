@@ -8,6 +8,7 @@ loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) {
     files <- list.files(patt='.*_segments.bed$')
     names(files) <- gsub('_segments.bed$', '', files)
   }
+  if(is.null(names(files))) names(files) <- files
 
   ## use the color-coded, labeled files if present...
   #
@@ -45,9 +46,14 @@ loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) {
     if(is.null(states) && buildStates) states <- model$states
   }
 
-  segList <- SegmentationList(lapply(files, importSegmentation, 
-                                     states=states, loud=T, genome=genome))
+  if(is.null(names(files))) names(files) <- files
+  segList <- GRangesList(lapply(files, importSegmentation, states=states, 
+                                       genome=genome, loud=T))
+  browser()
+  segList <- as(segList, 'SegmentationList')
   colDat <- DataFrame(segmentationName=names(files), bedFile=files)
+  rownames(colDat) <- names(files)
+
   x <- new('JointSegmentation', emissions=emis, transitions=trans,
            rowData=segList, colData=colDat, states=states,
            exptData=SimpleList(argv)) 

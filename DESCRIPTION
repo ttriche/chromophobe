@@ -1,8 +1,8 @@
 Package: chromophobe
 Type: Package
 Title: Explore chromatin state models, agreement, differences, and enrichments
-Version: 0.37
-Date: 2012-12-16
+Version: 0.40
+Date: 2012-12-17
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Import and analyze ChromHMM models and similar segmentation models

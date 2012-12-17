@@ -33,9 +33,6 @@ setAs("GRanges", "Segmentation", function(from) { # {{{
 }) # }}}
 
 setClass("SegmentationList", contains="GRangesList")
-SegmentationList <- function(...) { # {{{
-    as(GRangesList(list(...)), 'SegmentationList')
-} # }}}
 setAs("GRangesList", "SegmentationList", function(from) { # {{{
   from <- endoapply(from, function(x) {
     class(x) <- 'Segmentation'
