@@ -1,5 +1,4 @@
 setClass('States', contains="DataFrame") 
-setClassUnion('StatesOrNULL', c('NULL','States'))
 States <- function(DF) { # {{{
   stopifnot(any(c('Id','Name') %in% names(DF)))
   if(!'Name' %in% names(DF)) DF[['Name']] <- DF[['Id']]
@@ -46,11 +45,14 @@ setAs("GRangesList", "SegmentationList", function(from) { # {{{
   return(from)
 }) # }}}
 
+setClassUnion('StatesOrNULL', c('NULL','States'))
+setClassUnion('matrixOrNULL', c('NULL','matrix'))
+setClassUnion('dataframeOrNULL', c('NULL','data.frame'))
 setClass('JointSegmentation', contains="SummarizedExperiment",
     # {{{ a tweaked SummarizedExperiment
-    representation(probinit='data.frame',
-                   emissions='data.frame', 
-                   transitions='matrix',
+    representation(probinit='dataframeOrNULL',
+                   emissions='dataframeOrNULL', 
+                   transitions='matrixOrNULL',
                    states='StatesOrNULL',
                    rowData='SegmentationList')) # }}}
 
@@ -68,10 +70,3 @@ setClass("TrackHub",
          representation(hubUrl = "character", # {{{
                         hubName = "character",
                         hubNotes = "SimpleList")) # }}}
-
-setClass("TrackHubQuery", contains = "UCSCTableQuery")
-
-setClass("TrackHubSession", contains = c("UCSCSession","TrackHub")) 
-TrackHubSession <- function(hubUrl, ... ) { # {{{
-  new('TrackHubSession', hubUrl=hubUrl, ...)
-} # }}}

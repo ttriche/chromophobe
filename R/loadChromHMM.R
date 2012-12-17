@@ -1,11 +1,13 @@
-loadChromHMM <- function(path='.', g=NULL, states=NULL) { 
+loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) { 
 
   require(rtracklayer)
   if(path != '.') oldwd <- getwd()
   setwd(path)
   argv <- list()
-  files <- list.files(patt='.*_segments.bed$')
-  names(files) <- gsub('_segments.bed$', '', files)
+  if(is.null(files)) {
+    files <- list.files(patt='.*_segments.bed$')
+    names(files) <- gsub('_segments.bed$', '', files)
+  }
 
   ## use the color-coded, labeled files if present...
   #
@@ -29,25 +31,26 @@ loadChromHMM <- function(path='.', g=NULL, states=NULL) {
   if(length(list.files(patt='webpage')) > 0) {
     calls <- system2('grep', c('command', list.files(patt='webpage')), stdout=T)
     argv <- parseCommand(calls)
-    g <- argv$genome
+    genome <- argv$genome
   }
+  emis <- NULL
+  trans <- NULL
+
   modelFile <- grep('^model_?[123456789]*\\.txt$', list.files(), value=T)
-  model <- importModel(modelFile, loud=TRUE)
+  if(length(modelFile) > 0) {
+    model <- importModel(modelFile, loud=TRUE)
+    trans <- model$transitions
+    emis <- model$emissions
+    ## detect states from model, if possible and none provided
+    if(is.null(states) && buildStates) states <- model$states
+  }
 
-  ## detect states from model, if possible and none provided
-  if(is.null(states) && buildStates) states <- model$states
-
-  x <- new('JointSegmentation',
-            emissions=model$emissions,
-            transitions=model$transitions,
-            rowData=SegmentationList(lapply(files, 
-                                            importSegmentation,
-                                            states=states,
-                                            loud=T,
-                                            genome=g)),
-            colData=DataFrame(segmentationName=names(files), bedFile=files),
-            exptData=SimpleList(argv),
-            states=states)
+  segList <- SegmentationList(lapply(files, importSegmentation, 
+                                     states=states, loud=T, genome=genome))
+  colDat <- DataFrame(segmentationName=names(files), bedFile=files)
+  x <- new('JointSegmentation', emissions=emis, transitions=trans,
+           rowData=segList, colData=colDat, states=states,
+           exptData=SimpleList(argv)) 
   if(path != '.') setwd(oldwd)
   colnames(x) <- names(files)
   return(x)
