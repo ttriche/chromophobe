@@ -49,7 +49,6 @@ loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) {
   if(is.null(names(files))) names(files) <- files
   segList <- GRangesList(lapply(files, importSegmentation, states=states, 
                                        genome=genome, loud=T))
-  browser()
   segList <- as(segList, 'SegmentationList')
   colDat <- DataFrame(segmentationName=names(files), bedFile=files)
   rownames(colDat) <- names(files)
