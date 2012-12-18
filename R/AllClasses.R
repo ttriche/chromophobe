@@ -1,3 +1,7 @@
+## for JointSegmentation assembly, e.g. Roadmap
+setClassUnion('matrixORNULL', c('NULL','matrix'))
+setClassUnion('dataframeORNULL', c('NULL','data.frame'))
+
 setClass('States', contains="DataFrame") 
 States <- function(DF) { # {{{
   stopifnot(any(c('Id','Name') %in% names(DF)))
@@ -7,6 +11,13 @@ States <- function(DF) { # {{{
   class(DF) <- 'States'
   return(DF)
 } # }}}
+setAs("States", "data.frame", function(from) { # {{{
+  class(from) <- 'DataFrame'
+  as.data.frame(from)
+}) # }}}
+setAs("DataFrame", "States", function(from) { # {{{
+  States(from)  
+}) # }}}
 setValidity("States", function(object) { # {{{
   msg <- NULL
   for(i in c('Id','Name','Color')) if(!i %in% names(object)) {
@@ -21,10 +32,7 @@ setValidity("States", function(object) { # {{{
   }
   if (is.null(msg)) TRUE else msg
 }) # }}}
-setAs("States", "data.frame", function(from) { # {{{
-  class(from) <- 'DataFrame'
-  as.data.frame(from)
-}) # }}}
+setClassUnion('StatesORNULL', c('NULL','States'))
 
 setClass("Segmentation", contains="GRanges")
 setAs("GRanges", "Segmentation", function(from) { # {{{
@@ -42,22 +50,23 @@ setAs("GRangesList", "SegmentationList", function(from) { # {{{
   return(from)
 }) # }}}
 
-setClassUnion('StatesOrNULL', c('NULL','States'))
-setClassUnion('matrixOrNULL', c('NULL','matrix'))
-setClassUnion('dataframeOrNULL', c('NULL','data.frame'))
 setClass('JointSegmentation', contains="SummarizedExperiment",
     # {{{ a tweaked SummarizedExperiment
-    representation(probinit='dataframeOrNULL',
-                   emissions='dataframeOrNULL', 
-                   transitions='matrixOrNULL',
-                   states='StatesOrNULL',
+    representation(probinit='dataframeORNULL',
+                   emissions='dataframeORNULL', 
+                   transitions='matrixORNULL',
+                   states='StatesORNULL',
                    rowData='SegmentationList')) # }}}
 
-setClass('Occupancy', contains="DataFrame")
-Occupancy <- function(DF) { # {{{
+setClass('Occupancy',contains="DataFrame",representation(states="StatesORNULL"))
+Occupancy <- function(DF, statesData=NULL) { # {{{
   class(DF) <- 'Occupancy'
+  DF@states <- statesData
   return(DF)
 } # }}}
+setAs("DataFrame", "Occupancy", function(from) { # {{{
+  Occupancy(from)  
+}) # }}}
 setAs("Occupancy", "data.frame", function(from) { # {{{
   class(from) <- 'DataFrame'
   as.data.frame(from)
