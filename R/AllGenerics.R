@@ -2,33 +2,36 @@
 setGeneric('occupancy', function(object,x,...) standardGeneric('occupancy'))
 setMethod('occupancy', signature(object='JointSegmentation', x='missing'), #{{{
           function(object) {
-            occ <- occupancy(rowData(object))
+            occ <- occupancy(segmentation(object))
             occ@states <- states(object)
             occ
           }) # }}}
 setMethod('occupancy', signature(object='JointSegmentation', x='GenomicRanges'),#{{{
           function(object, x) {
-            occ <- occupancy(rowData(object), x)
+            occ <- occupancy(segmentation(object), x)
             occ@states <- states(object)
             occ
           }) # }}}
 setMethod('occupancy', signature(object='GRangesList', x='missing'),#{{{
           function(object) {
-            s <- levels(mcols(object[[1]])[,'state'])
-            d <- DataFrame(lapply(object, getOccupancy))
-            names(d) <- names(object)
+            l <- lapply(object, getOccupancy)
+            s <- unique(do.call(c, lapply(l, names)))
+            d <- DataFrame(lapply(l, function(ll) {
+              ll[setdiff(s, names(ll))] <- 0
+              return(ll[s])
+            }))
             rownames(d) <- s
             Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ],
                       states(object))
           }) # }}}
 setMethod('occupancy', signature(object='GRangesList', x='GRanges'),#{{{
           function(object, x) { 
-            s <- levels(mcols(object[[1]])[,'state'])
-            stopifnot(all(unlist(lapply(object, function(x) 
-                          identical(states, levels(mcols(x)[,'state']))))))
-            d <- DataFrame(lapply(names(object), function(m) 
-                                  occupancy(object[[m]], x)))
-            names(d) <- names(object)
+            l <- lapply(object, getOccupancy, x=x)
+            s <- unique(do.call(c, lapply(l, names)))
+            d <- DataFrame(lapply(l, function(ll) {
+              ll[setdiff(s, names(ll))] <- 0
+              return(ll[s])
+            }))
             rownames(d) <- s
             Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ],
                       states(object))
