@@ -8,17 +8,14 @@ plotOccupancy <- function(x, dropQuiescent=FALSE, stateColours=NULL) {
     title <- paste(title, '(exclusive of quiescent states)')
   }
   colorscale <- NULL
-  if(!is.null(stateColours)) {
-    colorscale <- stateColours
-  } else if(!is.null(stateColors(x))) {
-    colorscale <- stateColors(x)
-  }
+  if(!is.null(stateColours)) colorscale <- stateColours
+  else if(!is.null(stateColors(x))) colorscale <- stateColors(x)
   require(reshape2)
   byState <- melt(as.data.frame(x), id.vars='state')
   names(byState) <- gsub('^variable$', 'cell', names(byState))
   names(byState) <- gsub('^value$', 'fraction', names(byState))
   p <- ggplot(byState, aes(y=fraction, x=factor(cell), fill=state)) + 
-         geom_bar(position="fill") +
+         geom_bar(position="fill") + 
          theme(plot.title=element_text(face="bold",size=14),
                panel.background=element_blank(), 
                panel.margin = unit(0, "lines"), 
@@ -33,7 +30,7 @@ plotOccupancy <- function(x, dropQuiescent=FALSE, stateColours=NULL) {
          xlab('') + 
          ggtitle(title)
   if(!is.null(colorscale)) {
-    p <- p + scale_fill_manual(values=colorscale, breaks=rownames(x))
+    p <- p + scale_fill_manual(values=colorscale)
   }
   return(p)  
 }
