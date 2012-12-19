@@ -34,20 +34,26 @@ setValidity("States", function(object) { # {{{
 }) # }}}
 setClassUnion('StatesORNULL', c('NULL','States'))
 
-setClass("Segmentation", contains="GRanges")
+setClass("Segmentation", contains="GRanges", 
+        # {{{ a GRanges with defined states
+         representation(states="StatesORNULL")
+        ) # }}}
+Segmentation <- function(from, s=NULL) { # {{{
+  new('Segmentation', from, states=s)
+} # }}}
 setAs("GRanges", "Segmentation", function(from) { # {{{
-  class(from) <- 'Segmentation'
-  return(from)
+  Segmentation(from)
 }) # }}}
 
-setClass("SegmentationList", contains="GRangesList")
+setClass("SegmentationList", contains="GRangesList",
+         # {{{ a GRangesList with defined states
+         representation(states="StatesORNULL")
+        ) # }}}
+SegmentationList <- function(from, s=NULL) { # {{{
+  new('SegmentationList', endoapply(from, function(x) Segmentation(x)),states=s)
+} # }}}
 setAs("GRangesList", "SegmentationList", function(from) { # {{{
-  from <- endoapply(from, function(x) {
-    class(x) <- 'Segmentation'
-    return(x)    
-  }) 
-  class(from) <- 'SegmentationList'
-  return(from)
+  SegmentationList(from)
 }) # }}}
 
 setClass('JointSegmentation', contains="SummarizedExperiment",
@@ -57,6 +63,9 @@ setClass('JointSegmentation', contains="SummarizedExperiment",
                    transitions='matrixORNULL',
                    states='StatesORNULL',
                    rowData='SegmentationList')) # }}}
+setAs("JointSegmentation", "SegmentationList", function(from) { # {{{
+  SegmentationList(rowData(from), states(from))
+}) # }}}
 
 setClass('Occupancy',contains="DataFrame",representation(states="StatesORNULL"))
 Occupancy <- function(DF, statesData=NULL) { # {{{
@@ -72,7 +81,7 @@ setAs("Occupancy", "data.frame", function(from) { # {{{
   as.data.frame(from)
 }) # }}}
 
-setClass("TrackHub", 
+setClass("TrackHub", ## for downloading HMMs, etc -- may move to rtracklayer
          representation(hubUrl = "character", # {{{
                         hubName = "character",
                         hubNotes = "SimpleList")) # }}}
