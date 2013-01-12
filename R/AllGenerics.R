@@ -12,6 +12,12 @@ setMethod('occupancy', signature(object='JointSegmentation', x='GenomicRanges'),
             occ@states <- states(object)
             occ
           }) # }}}
+setMethod('occupancy', signature(object='JointSegmentation', x='SummarizedExperiment'),#{{{
+          function(object, x) {
+            occ <- occupancy(segmentation(object), rowData(x))
+            occ@states <- states(object)
+            occ
+          }) # }}}
 setMethod('occupancy', signature(object='GRangesList', x='missing'),#{{{
           function(object) {
             l <- lapply(object, getOccupancy)
