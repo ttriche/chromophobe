@@ -37,14 +37,16 @@ loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) {
   emis <- NULL
   trans <- NULL
 
-  modelFile <- grep('^model_?[123456789]*\\.txt$', list.files(), value=T)
+  modelFile <- grep('^model.*?\\.txt$', list.files(), value=T)
   if(length(modelFile) > 0) {
     model <- importModel(modelFile, loud=TRUE)
     trans <- model$transitions
     emis <- model$emissions
     ## detect states from model, if possible and none provided
     if(is.null(states) && buildStates) states <- model$states
-  }
+  } else {
+    message('No model file found, omitting shared model parameters')
+  } 
 
   if(is.null(names(files))) names(files) <- files
   segList <- GRangesList(lapply(files, importSegmentation, states=states, 

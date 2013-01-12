@@ -26,12 +26,10 @@ plotOccupancy <- function(x, dropQuiescent=FALSE, stateColours=NULL) {
                axis.text.y=element_blank(),
                axis.ticks.x=element_blank(),
                axis.ticks.y=element_blank()) +
-         ylab(paste0('Cumulative fraction of sites occupied')) + 
+         ylab(paste0('Fraction of sites occupied')) + 
          xlab('') + 
          ggtitle(title)
-  if(!is.null(colorscale)) {
-    p <- p + scale_fill_manual(values=colorscale)
-  }
+  if(!is.null(colorscale)) p <- p + scale_fill_manual(values=colorscale)
   return(p)  
 }
 
