@@ -1,13 +1,13 @@
 Package: chromophobe
 Type: Package
 Title: Explore chromatin state models, agreement, differences, and enrichments
-Version: 0.48
-Date: 2013-01-11
+Version: 0.49
+Date: 2013-01-14
 Author: Tim Triche, Jr. (thanks Toshi Hinoue, Fides Lay, Hui Shen & Jason Ernst)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Import and analyze ChromHMM models and similar segmentation models
 Depends: GenomicRanges (>= 1.10), reshape2, ggplot2, pheatmap
 Imports: Matrix, GenomicRanges, GenomicFeatures, rtracklayer
-Suggests: GenometriCorr, ggbio, rJava, tabplotd3, HMM, PST, footprintR
+Suggests: GenometriCorr, ggbio, rJava, tabplotd3, HMM, PST, footprintR, Gviz
 Enhances: regulatoR
 License: Artistic-2.0
