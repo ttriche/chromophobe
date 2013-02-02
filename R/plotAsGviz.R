@@ -1,4 +1,3 @@
-## plot one or more 
 plotAsGviz <- function(object, GR, colors=NULL, ...) {
   require(Gviz)
   ## see https://stat.ethz.ch/pipermail/bioconductor/2013-January/050247.html
@@ -25,4 +24,5 @@ plotAsGviz <- function(object, GR, colors=NULL, ...) {
   ## plotTracks(Broad1)
   ##
   stop('Plotting JointSegmentations in Gviz is almost, but not quite, done')
+  plotTracks(JointSegAsTracks)
 }
