@@ -92,20 +92,6 @@ setMethod('occupancy', signature(object='GRangesList', x='GRanges'),#{{{
             rownames(d) <- s
             Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ])
           }) # }}}
-setMethod('occupancy', signature(object='Segmentation', x='missing'),#{{{
-          function(object) {
-            occ <- getOccupancy(object)
-            d <- DataFrame(occ)
-            rownames(d) <- names(occ)
-            Occupancy(d[ order(occ, decreasing=TRUE), ], states=states(object))
-          }) # }}}
-setMethod('occupancy', signature(object='Segmentation', x='GRanges'),#{{{
-          function(object, x) {
-            occ <- getOccupancy(object, x)
-            d <- DataFrame(occ)
-            rownames(d) <- names(occ)
-            Occupancy(d[ order(occ, decreasing=TRUE), ], states=states(object))
-          }) # }}}
 setMethod('occupancy', signature(object='GRanges', x='missing'),#{{{
           function(object) getOccupancy(object)) # }}}
 setMethod('occupancy', signature(object='GRanges', x='GRanges'),#{{{
