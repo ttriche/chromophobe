@@ -69,9 +69,10 @@ setAs("JointSegmentation", "SegmentationList", function(from) { # {{{
 
 setClass('Occupancy',contains="DataFrame",representation(states="StatesORNULL"))
 Occupancy <- function(DF, statesData=NULL) { # {{{
-  class(DF) <- 'Occupancy'
-  DF@states <- statesData
-  return(DF)
+  occ <- new('Occupancy')
+  for(i in slotNames(DF)) slot(occ, i) <- slot(DF, i)
+  slot(occ, 'states') <- statesData
+  return(occ)
 } # }}}
 setAs("DataFrame", "Occupancy", function(from) { # {{{
   Occupancy(from)  

@@ -1,4 +1,32 @@
 ## Occupancy methods
+getOccupancy <- function(object, x=NULL) { # {{{
+
+  stopifnot(class(object) %in% c('Segmentation','GRanges'))
+
+  if(is.null(x)) {
+    ## FIXME: plot occupancy for a single segmentation needs work
+    unlist(lapply(split(object, mcols(object)[,'state']),
+                  function(s) sum(as.numeric(width(ranges(s))))))
+  } else { 
+    ## FIXME: there has to be a much faster way to do this
+    if(!class(object) %in% c('Segmentation','GRanges')) occupancy(object, x)
+    stopifnot('state' %in% names(mcols(object)))
+    ol <- findOverlaps(object, x)
+    so <- object[queryHits(ol)]
+    sx <- x[subjectHits(ol)]
+    disjoint <- subsetByOverlaps(disjoin(c(sx,so,ignore.mcols=T)), so)
+    mcols(disjoint)[,'state'] <- rep('', length(disjoint))
+    byState <- split(so, mcols(so)[,'state'])
+    for(state in names(byState)) {
+      overlapping <- queryHits(findOverlaps(disjoint, byState[[state]]))
+      if(length(overlapping)>0) {
+        mcols(disjoint[overlapping])[,'state'] <- state
+      }
+    }
+    mcols(disjoint)[,'state'] <- as.factor(mcols(disjoint)[,'state'])
+    getOccupancy(disjoint)
+  }
+} # }}}
 setGeneric('occupancy', function(object,x,...) standardGeneric('occupancy'))
 setMethod('occupancy', signature(object='JointSegmentation', x='missing'), #{{{
           function(object) {
@@ -18,29 +46,65 @@ setMethod('occupancy', signature(object='JointSegmentation', x='SummarizedExperi
             occ@states <- states(object)
             occ
           }) # }}}
-setMethod('occupancy', signature(object='GRangesList', x='missing'),#{{{
+setMethod('occupancy', signature(object='SegmentationList', x='missing'),#{{{
           function(object) {
-            l <- lapply(object, getOccupancy)
+            l <- lapply(object, occupancy)
             s <- unique(do.call(c, lapply(l, names)))
             d <- DataFrame(lapply(l, function(ll) {
               ll[setdiff(s, names(ll))] <- 0
               return(ll[s])
             }))
             rownames(d) <- s
-            Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ],
-                      states(object))
+            sts <- states(object)
+            Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ], sts)
+          }) # }}}
+setMethod('occupancy', signature(object='SegmentationList', x='GRanges'),#{{{
+          function(object, x) { 
+            l <- lapply(object, occupancy, x=x)
+            s <- unique(do.call(c, lapply(l, names)))
+            d <- DataFrame(lapply(l, function(ll) {
+              ll[setdiff(s, names(ll))] <- 0
+              return(ll[s])
+            }))
+            rownames(d) <- s
+            sts <- states(object)
+            Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ], sts)
+          }) # }}}
+setMethod('occupancy', signature(object='GRangesList', x='missing'),#{{{
+          function(object) {
+            l <- lapply(object, occupancy)
+            s <- unique(do.call(c, lapply(l, names)))
+            d <- DataFrame(lapply(l, function(ll) {
+              ll[setdiff(s, names(ll))] <- 0
+              return(ll[s])
+            }))
+            rownames(d) <- s
+            Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ])
           }) # }}}
 setMethod('occupancy', signature(object='GRangesList', x='GRanges'),#{{{
           function(object, x) { 
-            l <- lapply(object, getOccupancy, x=x)
+            l <- lapply(object, occupancy, x=x)
             s <- unique(do.call(c, lapply(l, names)))
             d <- DataFrame(lapply(l, function(ll) {
               ll[setdiff(s, names(ll))] <- 0
               return(ll[s])
             }))
             rownames(d) <- s
-            Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ],
-                      states(object))
+            Occupancy(d[ order(rowMeans(as.matrix(d)), decreasing=TRUE), ])
+          }) # }}}
+setMethod('occupancy', signature(object='Segmentation', x='missing'),#{{{
+          function(object) {
+            occ <- getOccupancy(object)
+            d <- DataFrame(occ)
+            rownames(d) <- names(occ)
+            Occupancy(d[ order(occ, decreasing=TRUE), ], states=states(object))
+          }) # }}}
+setMethod('occupancy', signature(object='Segmentation', x='GRanges'),#{{{
+          function(object, x) {
+            occ <- getOccupancy(object, x)
+            d <- DataFrame(occ)
+            rownames(d) <- names(occ)
+            Occupancy(d[ order(occ, decreasing=TRUE), ], states=states(object))
           }) # }}}
 setMethod('occupancy', signature(object='GRanges', x='missing'),#{{{
           function(object) getOccupancy(object)) # }}}
@@ -59,8 +123,13 @@ setMethod('byChr', signature(object='GenomicRanges'), # {{{
 
 ## States methods
 setGeneric('states', function(object, ...) { # {{{
-           if(class(object) == 'States') return(object)
-           return(slot(object, 'states'))
+           if(class(object) == 'States') {
+             return(object)
+           } else if('states' %in% slotNames(object)) {
+             return(slot(object, 'states'))
+           } else {
+             return(NULL)
+           }
           }) # }}}
 setMethod('$', 'States', # {{{
   function(x, name) {
