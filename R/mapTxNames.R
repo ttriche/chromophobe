@@ -1,15 +1,15 @@
-mapTxNames <- function(ids, db=NULL) { 
+mapTxNames <- function(ids, db=NULL, idtype='TXNAME', mapping='SYMBOL') { 
 
   if(is.null(db)) {
     require(Homo.sapiens)
     db <- Homo.sapiens
   }
-  symbolMappings <- select(db, cols=c('TXNAME','ENTREZID','SYMBOL'), 
-                           keys=symbol(txtr), keytype='TXNAME')
-
-  hasSymbol <- !is.na(symbolMappings$SYMBOL[ ids ]) 
-  ids[hasSymbol] <- symbolMappings$SYMBOL[ ids[hasSymbol] ]
-  if(length(hasSymbol)<length(ids)) warn('Symbols were not found for some IDs')
+  symbolMappings <- select(db, cols=c(idtype, mapping), 
+                           keys=ids, keytype=idtype)
+  symbolMappings <- symbolMappings[ match(ids, symbolMappings[[idtype]]), ]
+  hasSymbol <- !is.na(symbolMappings[[mapping]][ ids ]) 
+  ids[hasSymbol] <- symbolMappings[[mapping]][ ids[hasSymbol] ]
+  if(length(hasSymbol) < length(ids)) warn('Symbols not found for some IDs')
   return(ids)
 
 }
