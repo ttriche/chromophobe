@@ -1,16 +1,18 @@
-mapTxNames <- function(ids, db=NULL, idtype='TXNAME', mapping='SYMBOL') { 
+mapTxNames <- function(ids, db=NULL, idtype='TXNAME', what=c('TXID','SYMBOL')) {
 
+  warning('FIXME: this needs MUCH better testing!')
   if(is.null(db)) {
     require(Homo.sapiens)
     db <- Homo.sapiens
   }
-  symbolMappings <- select(db, cols=c(idtype, mapping), 
-                           keys=ids, keytype=idtype)
+  ok <- !is.na(ids)
+  sid <- ids[ok]
+  symbolMappings <- select(db, cols=c(idtype, what), keys=sid, keytype=idtype)
   symbolMappings <- symbolMappings[ match(ids, symbolMappings[[idtype]]), ]
-  hasSymbol <- !is.na(symbolMappings[[mapping]][ ids ]) 
-  ids[hasSymbol] <- symbolMappings[[mapping]][ ids[hasSymbol] ]
-  if(length(hasSymbol) < length(ids)) warn('Symbols not found for some IDs')
-  return(ids)
+  hasSymbol <- which(!is.na(symbolMappings[ ids, 'SYMBOL' ]))
+  syms <- symbolMappings[ ids, 'SYMBOL' ]
+  syms[ -hasSymbol ] <- symbolMappings[ ids[ -hasSymbol ], what[[1]] ]
+  syms
 
 }
 
