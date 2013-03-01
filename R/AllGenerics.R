@@ -10,6 +10,8 @@ getOccupancy <- function(object, x=NULL) { # {{{
   } else { 
     ## FIXME: there has to be a much faster way to do this
     if(!class(object) %in% c('Segmentation','GRanges')) occupancy(object, x)
+
+    ## FIXME: use gaps() to transform into State/notState 
     stopifnot('state' %in% names(mcols(object)))
     ol <- findOverlaps(object, x)
     so <- object[queryHits(ol)]
