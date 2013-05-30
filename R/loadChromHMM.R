@@ -1,4 +1,4 @@
-loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) { 
+loadChromHMM <- function(path='.',genome=NULL,states=NULL,files=NULL,para=F) { 
 
   require(rtracklayer)
   if(path != '.') oldwd <- getwd()
@@ -49,9 +49,22 @@ loadChromHMM <- function(path='.', genome=NULL, states=NULL, files=NULL) {
   } 
 
   if(is.null(names(files))) names(files) <- files
-  segList <- GRangesList(lapply(files, importSegmentation, states=states, 
-                                       genome=genome, loud=T))
-  segList <- as(segList, 'SegmentationList')
+  if(para == TRUE) {
+    require(parallel)
+    segs <- mclapply(files, importSegmentation, 
+                     genome=genome, states=states, loud=T)
+  } else { 
+    segs <- lapply(files, importSegmentation, 
+                   gen=genome, states=states, loud=T)
+  }
+  mcol.idx <- unlist(lapply(segs, function(x) length(names(mcols(x)))))
+  minMcols <- function(x, minCols=1) { # {{{
+                mcols(x) <- mcols(x)[, seq_len(minCols)]
+                names(mcols(x))[1] <- 'state'
+                return(x)
+              } # }}}
+  segs <- lapply(segs, minMcols, minCols=min(mcol.idx))
+  segList <- SegmentationList(GRangesList(segs), s=states)
   colDat <- DataFrame(segmentationName=names(files), bedFile=files)
   rownames(colDat) <- names(files)
 

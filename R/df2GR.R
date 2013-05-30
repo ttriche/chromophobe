@@ -1,16 +1,13 @@
 require(GenomicRanges)
-
 fromChr <- function(seqs, prefix='chr') { # {{{
   for(i in rev(seq_len(nchar(prefix)))) {
     seqs <- gsub(paste0('^', substr(prefix, 1, i)), '', seqs)
   }
   return(seqs)
 } # }}}
-
 toChr <- function(seqs, prefix='chr') { # {{{
   paste0(prefix, fromChr(seqs, prefix))
 } # }}}
-
 df2GR <- function(df, keepColumns=F, ignoreStrand=F, prefix='chr') { ## {{{
 
   if(class(df) == 'DataFrame') df <- as(df, 'data.frame')
@@ -99,6 +96,6 @@ df2GR <- function(df, keepColumns=F, ignoreStrand=F, prefix='chr') { ## {{{
 
   return(GR)
 } # }}}
-
-## add coercion
 setAs("data.frame", "GRanges", function(from) df2GR(from, ...))
+setAs("DataFrame", "GRanges", function(from) df2GR(from, ...))
+as.data.frame.DataFrame <- selectMethod("as.data.frame", "DataFrame")
