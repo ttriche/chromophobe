@@ -216,45 +216,32 @@ setMethod('posterior', signature(object='JointSegmentation', x='character'),#{{{
           function(object, x) {
             stop('FIXME: Posterior probabilities are not yet supported!')
           }) # }}}
-setMethod("combine", signature=signature(x="SummarizedExperiment", 
-                                         y="SummarizedExperiment"),  # {{{
-          function(x, y, ...) {
-              if (class(x) != class(y)) {
-                stop(paste("Error: objects must be the same class, but are ",
-                           class(x), ", ", class(y), sep=""))
-              }
-              if( all(is.na(genome(rowData(x)))) || 
-                  all(is.na(genome(rowData(y)))) ||
-                  unique(na.omit(genome(rowData(x)))) !=
-                  unique(na.omit(genome(rowData(y)))) ) {
-                stop("Error: x and y have differing or unspecified genomes")
-              }
-              ## FIXME: allow for "packing out" missing features using NAs
-              if( length(intersect(rownames(x), rownames(y))) < nrow(x) || 
-                  length(intersect(rownames(x), rownames(y))) < nrow(y) ) {
-                stop("Error: x and y have differing features, cannot combine")
-              }
-              commonAsys <- intersect(names(assays(x, withDimnames=FALSE)), 
-                                      names(assays(y, withDimnames=FALSE)))
-              if(length(commonAsys) < 1) stop('Error: no assays in common')
-              else names(commonAsys) <- commonAsys
-
-              combineAssay <- function(asy, x, y) {
-                cbind(assays(x)[[asy]], assays(y[rownames(x), ])[[asy]])
-              }
-
-              SE <- SummarizedExperiment(
-                assays=lapply(commonAsys, combineAssay, x=x, y=y),
-                colData=merge(colData(x), colData(y), all=T, sort=F),
-                rowData=rowData(x)
-              )
-              colnames(SE) <- c(colnames(x), colnames(y))
-              return(SE)
-
-          }) # }}}
 setMethod("combine", signature=signature(x="JointSegmentation", 
                                          y="JointSegmentation"), # {{{ 
-          function(x,y,...) stop("Don't combine HMMs; reload them jointly"))#}}}
+          function(x, y) {
+            if(!identical(dimnames(states(x)), dimnames(states(y)))) {
+              stop('Models to be combined must have identical states')
+            } else if(!identical(states(x)$Id, states(y)$Id)) {
+              stop('Models to be combined must have identical state IDs')
+            } else if(!identical(states(x)$Name, states(y)$Name)) {
+              stop('Models to be combined must have identical state names')
+            } else if(!identical(emissions(x), emissions(y))) {
+              stop('Models to be combined must have identical emissions')
+            } else if(!identical(transitions(x), transitions(y))) { 
+              stop('Models to be combined must have identical transitions')
+            } else if(!identical(names(colData(x)), names(colData(y)))) {
+              stop('Models to be combined must have identical colData names')
+            } 
+            new( 'JointSegmentation',
+                 emissions=emissions(x),
+                 transitions=transitions(x),
+                 rowData=SegmentationList(append(segmentation(x), 
+                                                 segmentation(y)),
+                                          s=states(x)),
+                 colData=rbind(colData(x), colData(y)),
+                 exptData=exptData(x),
+                 states=states(x) )
+          })#}}}
 setMethod("keepSeqlevels", signature(x="SummarizedExperiment", value="ANY"),
           function(x, value) { # {{{
             y <- which(rownames(x) %in% names(keepSeqlevels(rowData(x),value)))
@@ -264,6 +251,10 @@ setMethod("sort", signature(x="SummarizedExperiment"),
           function(x) { # {{{ 
             x[ names(sort(rowData(x))), ]  
           }) # }}}
+setGeneric('names', function(object,x,...)standardGeneric('segmentation'))
+setMethod('segmentation',signature(object='JointSegmentation',x='missing'),#{{{
+           function(object, x) rowData(object)
+          ) # }}}
 setMethod('plot', signature(x='JointSegmentation', y='GRanges'), # {{{
           function(x, y, ...) plotChromHMM(x, y, ...)) # }}}
 setMethod('plot', signature(x='JointSegmentation', y='character'), # {{{
@@ -283,6 +274,12 @@ setMethod('plot', signature(x='JointSegmentation', y='missing'), # {{{
             message('Plotting occupancy; can also choose emissions/transitions')
             plot(occupancy(x), ...)
           }) # }}}
+setMethod('names', signature(x='JointSegmentation'), function(x) colnames(x))
+setReplaceMethod('names',signature(x="JointSegmentation",value="character"),#{{{
+  function(x, value) {
+    dimnames(x) <- list(value, value)
+    return(x)
+  }) # }}}
 
 ## SegmentationList methods (mostly to produce a valid Segmentation with states)
 setMethod('$', 'SegmentationList', # {{{

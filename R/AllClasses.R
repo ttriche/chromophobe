@@ -66,6 +66,15 @@ setClass('JointSegmentation', contains="SummarizedExperiment",
 setAs("JointSegmentation", "SegmentationList", function(from) { # {{{
   SegmentationList(rowData(from), states(from))
 }) # }}}
+validJointSegmentation <- function(object) { # {{{
+  if(identical(rownames(object), colnames(object))) TRUE
+  else paste('Non-identical row and column names:',
+             paste(setdiff(colnames(object), rownames(object)), collapse=', '),
+             'not in colnames, ', 
+             paste(setdiff(rownames(object), colnames(object)), collapse=', '),
+             'not in rownames!')
+} # }}}
+# setValidity("JointSegmentation", validJointSegmentation) ## rownames==colnames
 
 setClass('Occupancy',contains="DataFrame",representation(states="StatesORNULL"))
 Occupancy <- function(DF, statesData=NULL) { # {{{
