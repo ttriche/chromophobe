@@ -251,7 +251,6 @@ setMethod("sort", signature(x="SummarizedExperiment"),
           function(x) { # {{{ 
             x[ names(sort(rowData(x))), ]  
           }) # }}}
-setGeneric('names', function(object,x,...)standardGeneric('segmentation'))
 setMethod('segmentation',signature(object='JointSegmentation',x='missing'),#{{{
            function(object, x) rowData(object)
           ) # }}}
