@@ -50,6 +50,7 @@ setClass("SegmentationList", contains="GRangesList",
          representation(states="StatesORNULL")
         ) # }}}
 SegmentationList <- function(from, s=NULL) { # {{{
+  if(class(from) == 'list') from <- GRangesList(from)
   new('SegmentationList', endoapply(from, function(x) Segmentation(x)),states=s)
 } # }}}
 setAs("GRangesList", "SegmentationList", function(from) { # {{{

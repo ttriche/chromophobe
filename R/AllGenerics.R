@@ -103,11 +103,41 @@ setMethod('plot', signature(x='Occupancy', y='missing'), # {{{
 
 ## utility splitting methods
 setGeneric('byState', function(object, ...) standardGeneric('byState'))
-setMethod('byState', signature(object='Segmentation'), # {{{
+setMethod('byState', signature(object='GenomicRanges'), # {{{
           function(object) split(object, mcols(object)[,'state'])) # }}}
-setGeneric('byChr', function(object, ...) standardGeneric('byChr'))
-setMethod('byChr', signature(object='GenomicRanges'), # {{{
+setMethod('byState', signature(object='SegmentationList'), # {{{
+          function(object) {
+            lapply(states(object)$Name, 
+                   function(i) {
+                     SegmentationList(lapply(object,function(x)byState(x)[[i]]),
+                                      s=states(object))
+                   })
+          }) # }}}
+setMethod('byState', signature(object='JointSegmentation'), # {{{
+          function(object) byState(segmentations(object))) # }}}
+
+setGeneric('byChr', function(object, x, ...) standardGeneric('byChr'))
+setMethod('byChr', signature(object='GenomicRanges', x='missing'), # {{{
           function(object) split(object, seqnames(object))) # }}}
+setMethod('byChr', signature(object='GenomicRanges', x='character'), # {{{
+          function(object, x) split(object, seqnames(object))[[x]]) # }}}
+setMethod('byChr', signature(object='SegmentationList', x='missing'), # {{{
+          function(object) {
+            lapply(seqlevels(object), 
+                   function(i) {
+                     SegmentationList(lapply(object, function(x) byChr(x)[[i]]),
+                                      s=states(object))
+                   })
+          }) # }}}
+setMethod('byChr', signature(object='SegmentationList', x='character'), # {{{
+          function(object, x) {
+            SegmentationList(lapply(object, function(y) byChr(y)[[x]]),
+                             s=states(object))
+          }) # }}}
+setMethod('byChr', signature(object='JointSegmentation', x='missing'), # {{{
+          function(object) byChr(segmentations(object))) # }}}
+setMethod('byChr', signature(object='JointSegmentation', x='character'), # {{{
+          function(object, x) byChr(segmentations(object), x)) # }}}
 
 ## States methods
 setGeneric('states', function(object, ...) { # {{{
@@ -207,10 +237,21 @@ setMethod('emissions', signature(object='JointSegmentation'), # {{{
 setGeneric('transitions', function(object, ...) standardGeneric('transitions'))
 setMethod('transitions', signature(object='JointSegmentation'), # {{{
           function(object) object@transitions) # }}}
-setGeneric('segmentation',function(object,x,...)standardGeneric('segmentation'))
-setMethod('segmentation',signature(object='JointSegmentation',x='missing'),#{{{
-           function(object, x) rowData(object)
+setGeneric('segmentation', function(object,...) standardGeneric('segmentation'))
+setMethod('segmentation', signature(object='JointSegmentation'), # {{{
+           function(object) rowData(object)
           ) # }}}
+setMethod('segmentation', signature(object='SegmentationList'), # {{{
+           function(object) return(object)
+          ) # }}}
+setGeneric('segmentations', function(object) standardGeneric('segmentations'))
+setMethod('segmentations', signature(object='JointSegmentation'), # {{{
+           function(object) segmentation(object)
+          ) # }}}
+setMethod('segmentations', signature(object='SegmentationList'), # {{{
+           function(object) return(object)
+          ) # }}}
+
 setGeneric('posterior', function(object, x, ...) standardGeneric('posterior'))
 setMethod('posterior', signature(object='JointSegmentation', x='character'),#{{{
           function(object, x) {
@@ -251,9 +292,6 @@ setMethod("sort", signature(x="SummarizedExperiment"),
           function(x) { # {{{ 
             x[ names(sort(rowData(x))), ]  
           }) # }}}
-setMethod('segmentation',signature(object='JointSegmentation',x='missing'),#{{{
-           function(object, x) rowData(object)
-          ) # }}}
 setMethod('plot', signature(x='JointSegmentation', y='GRanges'), # {{{
           function(x, y, ...) plotChromHMM(x, y, ...)) # }}}
 setMethod('plot', signature(x='JointSegmentation', y='character'), # {{{
