@@ -1,6 +1,7 @@
 ## plot emission and transition probabilities by state
 ##
 plotStates <- function(object, what='emissions', states=NULL, target=NULL,...){
+  if(is.null(states)) states <- states(object)
   if(what == 'emissions') {
     plotEmissions(emissions(object), states=states, target=target, ...)
   } else if(what == 'transitions') {
@@ -12,21 +13,24 @@ plotStates <- function(object, what='emissions', states=NULL, target=NULL,...){
 
 reshapeEmissions <- function(emissions, how='matrix') { # {{{ refactored
   require('reshape2')
-  if(how == 'matrix') acast(emissions, state ~ mark, value.var='p')
-  else if(how == 'data.frame') dcast(emissions, state ~ mark, value.var='p')
-  else stop(paste("Don't know how to reshape emissions into a", how))
+  if(how == 'matrix') {
+    acast(emissions, state ~ mark, value.var='p')
+  } else if(how == 'data.frame') {
+    dcast(emissions, state ~ mark, value.var='p')
+  } else {
+    stop(paste("Don't know how to reshape emissions into a", how))
+  }
 } # }}}
 
-plotEmissions <- function(emissions, states=NULL, target=NULL, ...) { # {{{
+plotEmissions <- function(emissions,states=NULL,target=NULL,cluster=T,legend=F, ...) { # {{{
 
   require('pheatmap')
-  if(!is.null(states)) message('Have not dealt with state assignments yet :-/')
 
   ## now cast to a manageable structure and plot
   if(!is.null(target)) {
     pheatmap2(reshapeEmissions(emissions, 'matrix'),
               color=colorRampPalette(c('white','darkblue'))(100), 
-              legend=T, fontsize=16, cellwidth=16, cellheight=16,
+              legend=legend, fontsize=16, cellwidth=16, cellheight=16,
               clustering_distance_rows='manhattan', 
               clustering_distance_cols='manhattan',
               border_color='white', 
@@ -35,12 +39,15 @@ plotEmissions <- function(emissions, states=NULL, target=NULL, ...) { # {{{
               ... )
   } else {
     nStates <- length(unique(emissions$state))
-    pheatmap2(reshapeEmissions(emissions, 'matrix'),
+    emis <- reshapeEmissions(emissions, 'matrix')[ states$Id, ] 
+    rownames(emis) <- paste(states$Name, paste0('(', rownames(emis), ')'))
+    pheatmap2(emis,
               color=colorRampPalette(c('white','darkblue'))(100), 
-              legend=T, fontsize=16, cellwidth=16, cellheight=16,
+              legend=legend, fontsize=16, cellwidth=16, cellheight=16,
+              cluster_rows=cluster, cluster_cols=cluster, 
               clustering_distance_rows='manhattan', 
               clustering_distance_cols='manhattan',
-              main=paste('Emissions for all', nStates, 'states'),
+              main=paste('Emissions by state',ifelse(cluster,'(clustered)','')),
               border_color='white', ... )
   }
 
