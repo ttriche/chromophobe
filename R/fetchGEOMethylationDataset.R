@@ -104,6 +104,8 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
   gset <- getGEO(GSE)
   idx <- length(gset)
   platform <- annotation(gset[[1]])
+
+  ## fixme: call combine() for multiple-gset same-platform GSEs
   if(length(gset) > 1) { # {{{ get the methylation component(s)
     idx <- grep("GPL13534", attr(gset, "names")) ## 450k
     if(!is.null(idx)) platform <- 'GPL13534'
@@ -112,6 +114,7 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
       if(!is.null(idx)) platform <- 'GPL8490'
     }
   } # }}}
+
   gset <- gset[[idx]]
   sampleNames(gset) <- gset$title
   chrCol <- grep('^chr$', ignore.case=TRUE, names(fData(gset)))[1]
@@ -122,14 +125,14 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
   fData(gset)$strand <- '*'
 
   ## hm27 is annotated against hg18
-  if(platform == 'GPL8490') {
+  if(platform == 'GPL8490') { # {{{
     row.dat <- df2GR(fData(gset), keep=TRUE)
     genome(row.dat) <- 'hg18' 
-  }
+  } # }}}
 
   ## hm450 is against hg19
   ## add simple SNP probe fix
-  if(platform == 'GPL13534') {
+  if(platform == 'GPL13534') { # {{{
     rsProbes <- grep('^rs', featureNames(gset), value=T)
     if(length(rsProbes) > 0) {
       ## the following were merged at some point... drop them 
@@ -148,7 +151,7 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
     genome(row.dat) <- 'hg19' 
     ## length(row.dat)
     ## [1] 485575
-  } 
+  } # }}}
 
   row.dat <- keepSeqlevels(row.dat, paste0('chr', c(1:22, 'X', 'Y')))
   preprocessing <- c(rg.norm=paste0('See GEO ',GSE,' for details'),
@@ -156,7 +159,7 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
   gset <- GenomicRatioSet(gr=row.dat, Beta=exprs(gset)[names(row.dat),],
                           pData=pData(gset), annotation=platform,
                           preprocessMethod=preprocessing)
-  exptData(gset) <- SimpleList(Provenance=GSE, DownloadedBy='chromophobe')
+  exptData(gset) <- SimpleList(GSE=GSE)
   return(gset)
 
 } # }}}
