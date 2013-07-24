@@ -121,12 +121,14 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
   fData(gset)$chromEnd <- fData(gset)[ , startCol]
   fData(gset)$strand <- '*'
 
+  ## hm27 is annotated against hg18
   if(platform == 'GPL8490') {
     row.dat <- df2GR(fData(gset), keep=TRUE)
     genome(row.dat) <- 'hg18' 
   }
 
-  ## a simple SNP probe fix
+  ## hm450 is against hg19
+  ## add simple SNP probe fix
   if(platform == 'GPL13534') {
     rsProbes <- grep('^rs', featureNames(gset), value=T)
     if(length(rsProbes) > 0) {
@@ -139,13 +141,14 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
       ## rownames(snpLocs.450k) <- rsProbes
       ## save(snpLocs.450k, file="~/chromophobe/data/snpLocs.450k.rda")
       data(snpLocs.450k)
-      fData(gset)$chrom[rsProbes] <- snpLocs.450k$chrom[ rsProbes ]
-      fData(gset)$chromStart[snps] <- snpLocs.450k$chrom[ rsProbes ]
-      fData(gset)$chromEnd[snps] <- snpLocs.450k$chrom[ rsProbes ]
+      fData(gset)[rsProbes, c('chrom','chromStart','chromEnd')] <- 
+        snpLocs.450k[rsProbes, c('chrom','chromStart','chromEnd')]
     }
     row.dat <- df2GR(fData(gset), keep=TRUE)
     genome(row.dat) <- 'hg19' 
-  }
+    ## length(row.dat)
+    ## [1] 485575
+  } 
 
   row.dat <- keepSeqlevels(row.dat, paste0('chr', c(1:22, 'X', 'Y')))
   preprocessing <- c(rg.norm=paste0('See GEO ',GSE,' for details'),
