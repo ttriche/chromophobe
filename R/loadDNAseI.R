@@ -11,7 +11,7 @@ loadDNAseI <- function(path='.',genome=NULL,states=NULL,files=NULL,para=T,addGap
     files <- list.files(patt='.*footprints*bed$')
     if(length(files) == 0) files <- list.files(patt='.*DNASE.uniformPeak.*bed$')
     if(length(files) == 0) stop('No DNAseI footprints or uniformPeaks found')
-    names(files) sapply(files, function(x) strsplit(x, '.', fixed=T)[[1]][1])
+    names(files) <- sapply(files, function(x) strsplit(x, '.', fixed=T)[[1]][1])
   }
   if(is.null(names(files))) names(files) <- files
 
