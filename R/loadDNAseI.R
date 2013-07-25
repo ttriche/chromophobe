@@ -1,11 +1,18 @@
 ## realistically, if trans/emis can't be estimated, we've got a problem...
-loadMethylHMM <- function(path='.',genome=NULL,states=NULL,files=NULL, para=T, addGaps=F, gapState='HMR') { 
+loadDNAseI <- function(path='.',genome=NULL,states=NULL,files=NULL,para=T,addGaps=T, gapState='OTHER', nonGapState='DHS') { 
 
   require(rtracklayer)
   if(path != '.') oldwd <- getwd()
   setwd(path)
   argv <- list()
-  if(is.null(files)) files <- list.files(patt='.*ethylHMM.*bed$')
+
+  ## try both footprints and, if no footprints, uniform peaks...
+  if(is.null(files)) {
+    files <- list.files(patt='.*footprints*bed$')
+    if(length(files) == 0) files <- list.files(patt='.*DNASE.uniformPeak.*bed$')
+    if(length(files) == 0) stop('No DNAseI footprints or uniformPeaks found')
+    names(files) sapply(files, function(x) strsplit(x, '.', fixed=T)[[1]][1])
+  }
   if(is.null(names(files))) names(files) <- files
 
   buildStates <- TRUE
@@ -26,12 +33,12 @@ loadMethylHMM <- function(path='.',genome=NULL,states=NULL,files=NULL, para=T, a
   if(para == TRUE) {
     require(parallel)
     segs <- mclapply(files, importSegmentation, 
-                     genome=genome, states=states, loud=T, 
-                     addGaps=addGaps, gapState=gapState)
+                     genome=genome, states=states, loud=T, addGaps=addGaps, 
+                     gapState=gapState, nonGapState=nonGapState)
   } else { 
     segs <- lapply(files, importSegmentation, 
-                   gen=genome, states=states, loud=T,
-                   addGaps=addGaps, gapState=gapState)
+                   genome=genome, states=states, loud=T, addGaps=addGaps, 
+                   gapState=gapState, nonGapState=nonGapState)
   }
   mcol.idx <- unlist(lapply(segs, function(x) length(names(mcols(x)))))
   minMcols <- function(x, minCols=1) { # {{{

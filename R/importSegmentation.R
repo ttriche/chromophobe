@@ -3,9 +3,37 @@ importSegmentation <- function(file,
                                genome=NULL,
                                states=NULL, 
                                statecol='name', 
-                               loud=FALSE) {
+                               loud=FALSE,
+                               addGaps=FALSE,
+                               nonGapState=NULL,
+                               gapState='OTHER') {
+  require(rtracklayer)
   if(loud) message(paste('Importing segmentation from', file, '...'))
   x <- import.bed(file, asRangedData=FALSE)
+
+  ## for MethylHMMs and DNAseI peaks/footprints
+  if(addGaps==TRUE) {
+    if(!is.null(nonGapState)) {
+      mcols(x)[, statecol] <- nonGapState
+      mcols(x)[, 'type'] <- nonGapState
+    } else {
+      mcols(x)[, 'type'] <- mcols(x)[, statecol]
+    }
+    gapsX <- gaps(x)
+    gapsX <- gapsX[ which(strand(gapsX) == '*') ]
+    mcols(gapsX)[, statecol] <- gapState
+    mcols(gapsX)[, 'type'] <- gapState
+    mcols(gapsX)[, 'score'] <- 0
+    keep.cols <- c('score', statecol, 'type') 
+    mcols(x)[,statecol] <- mcols(x)$type
+    mcols(x) <- mcols(x)[, keep.cols]
+    mcols(gapsX) <- mcols(gapsX)[, keep.cols]
+    merged <- sort(c(x, gapsX))
+    mcols(merged)$type <- as.factor(mcols(merged)$type)
+    mcols(merged)$score <- as.numeric(mcols(merged)$score)
+    x <- merged
+  }
+
   mcols(x)[, statecol] <- as.factor(mcols(x)[, statecol])
   if(!is.null(states)) {
     stopifnot(class(states) == 'States')
@@ -22,7 +50,6 @@ importSegmentation <- function(file,
   }
   if(!is.null(genome)) {
     genome(x) <- genome
-    require(rtracklayer)
     seqinfo(x) <- rtracklayer::SeqinfoForBSGenome(genome)[seqlevels(x)]
   } else {
     message('You did not specify a genome -- this could cause trouble later on')
