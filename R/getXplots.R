@@ -31,7 +31,7 @@ getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL){
                 heatmap.3(tmp, scale="none", trace="none", 
                           ColIndividualColors=colSide, color.FUN=get(col.fun), 
                           dendrogram='none', kc=2, labCol=colnames(x), 
-                          labRow=Xprobes, Colv=T, Rowv=TRUE,
+                          labRow=Xloci, Colv=T, Rowv=TRUE,
                           main=paste('chrX clustering for', name)))
   })
   sex <- clusts$col.clusters
