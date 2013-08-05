@@ -1,4 +1,5 @@
 import(Matrix)
+import(matrixStats)
 import(rtracklayer)
 import(GenomicRanges)
 exportPattern("^[[:alpha:]]+")
