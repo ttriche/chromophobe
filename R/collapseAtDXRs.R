@@ -19,6 +19,7 @@ collapseAtDXRs <- function(x, y, how=c('median','mean','sum','max','min'), paral
     require(GenomicRanges)
     stopifnot(is(y, 'GenomicRanges'))
     stopifnot(is(x, 'SummarizedExperiment'))
+    y <- subsetByOverlaps(y, x)
     xx <- subsetByOverlaps(x, y)
 
     ## find and index the runs
@@ -40,7 +41,7 @@ collapseAtDXRs <- function(x, y, how=c('median','mean','sum','max','min'), paral
     summarizedAssays <- asyApply(xx, summarizeAsy, parallel=parallel)
     
     ## construct a clone of the original SE but with the new correct # of rows 
-    res <- x[ seq_along(y), ] ## kludge to retain everything while re-sizing 
+    res <- x[ seq_along(y), ] ## to retain covariates 
     for(i in names(summarizedAssays)) assays(res)[[i]] <- summarizedAssays[[i]]
     rownames(res) <- paste0(names(byDXR), '.', how)
 
