@@ -47,7 +47,9 @@ collapseAtDXRs <- function(x, y, how=c('median','mean','sum','max','min'), paral
 
     ## now fix the rowData for the result
     ranges(rowData(res)) <- ranges(y)
-    seqdummy <- as(seqnames(res), 'factor') ## Herve fix
+    seqdummy <- rep(seqlevels(y), nrow(res)/20)[seq_len(nrow(res))] 
+    seqdummy <- factor(seqdummy, levels=seqlevels(res))
+
     seqnames(rowData(res)) <- seqdummy[as.numeric(match(seqnames(y), seqdummy))]
     strand(rowData(res)) <- strand(y)
     return(res)
