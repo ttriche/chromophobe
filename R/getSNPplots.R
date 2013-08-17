@@ -1,7 +1,6 @@
 getSNPplots<-function(x, individuals=NULL, rotate=FALSE, col.fun='SNP') {
   require('GMD')
   require('fastcluster')
-  require('GenomicRanges')
   tmp <- matrix()
   if(is(x, 'SummarizedExperiment')) {
     probes <- grep('^rs', names(rowData(x)))

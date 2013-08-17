@@ -1,4 +1,6 @@
 getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL){
+
+  ## FIXME: get rid of dependence on GMD
   require('GMD')
   require('fastcluster')
   require('GenomicRanges')
@@ -34,8 +36,13 @@ getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL){
                           labRow=Xloci, Colv=T, Rowv=TRUE,
                           main=paste('chrX clustering for', name)))
   })
+
+  ## higher == female (XX with one Xi) 
+  means <- tapply(colMeans(tmp, na.rm=T), clusts$col.clusters, mean)
+  labels <- c('M','F')
+  if(means[1] > means[2]) labels <- rev(labels)
   sex <- clusts$col.clusters
   sex[clusts$colInd] <- sex
   message('Assigned chrX cluster (assuming this is DNA methylation data):')
-  return(gsub(1,'M', gsub('2','F', sex)))
+  return(gsub('1', labels[1], gsub('2', labels[2], sex)))
 }
