@@ -52,8 +52,17 @@ getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL, pval=.000001){
   ## do a test to quantify the chance they're all the same
   p <- wilcox.test(by.clust[[1]], by.clust[[2]])$p.value
   if(p > pval) {
-    message('Cannot distinguish two sexes.  Assigning everyone NA.')
-    return(rep(NA, length(clusts$col.clusters)))
+    message('Cannot distinguish sex: Pr(one sex) = ',p,' > ',pval,' (cutoff)')
+    capture.output({
+      clusts <- suppressWarnings(
+                  heatmap.3(tmp, scale="none", trace="none", 
+                            ColIndividualColors=colSide, 
+                            color.FUN=get(col.fun), 
+                            dendrogram='none', labCol=colnames(x), 
+                            labRow=Xloci, Colv=T, Rowv=TRUE,
+                            main=paste('chrX clustering for', name)))
+    })
+    return(rep(NA, ncol(tmp)))
   } else { 
     message('Pr(all samples are the same sex) = ', p)
     labels <- c('M','F')
