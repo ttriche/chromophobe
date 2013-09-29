@@ -105,7 +105,7 @@ fetchGEOMethylationDataset <- function(GSE) { # {{{
   idx <- length(gset)
   platform <- annotation(gset[[1]])
 
-  ## fixme: call combine() for multiple-gset same-platform GSEs
+  ## fixme: call combine() for multiple-gset same-platform GSEs?
   if(length(gset) > 1) { # {{{ get the methylation component(s)
     idx <- grep("GPL13534", attr(gset, "names")) ## 450k
     if(!is.null(idx)) platform <- 'GPL13534'
