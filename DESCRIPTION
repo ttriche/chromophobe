@@ -1,7 +1,7 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, agreement, cross-enrichment and predictions
-Version: 0.75
+Version: 0.76
 Date: 2013-10-03
 Author: Tim Triche, Jr. (also Fides Lay, Hui Shen, Jason Ernst & Moiz Bootwalla)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
