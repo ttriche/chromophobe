@@ -24,7 +24,9 @@ collapseAtDXRs <- function(x, y, how=c('median','mean','sum','max','min'), paral
 
     ## find and index the runs
     hitz <- findOverlaps(xx, y)
-    byDXR <- seqapply(split(hitz, subjectHits(hitz)), queryHits)
+    byDXR <- seqapply(split(as(hitz, 'data.frame'), 
+                            subjectHits(hitz)),
+                      function(z) z[, 'queryHits'])
     names(byDXR) <- paste0('region', length(byDXR))
 
     ## obtain the summarizer
@@ -49,7 +51,6 @@ collapseAtDXRs <- function(x, y, how=c('median','mean','sum','max','min'), paral
     ranges(rowData(res)) <- ranges(y)
     seqdummy <- rep(seqlevels(y), nrow(res)/20)[seq_len(nrow(res))] 
     seqdummy <- factor(seqdummy, levels=seqlevels(res))
-
     seqnames(rowData(res)) <- seqdummy[as.numeric(match(seqnames(y), seqdummy))]
     strand(rowData(res)) <- strand(y)
     return(res)
