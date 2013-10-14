@@ -9,7 +9,9 @@ grSetToBsSeq <- function(grset, defaultCov=15) {
 bedToBsSeq <- function(bedfile, MandCov='name', coefSmooth=NULL, genome='mm9'){
   require(bsseq)
   require(rtracklayer)
-  grToBsSeq(import(bedfile, genome=genome))
+  bsseq <- grToBsSeq(import(bedfile, genome=genome))
+  sampleNames(bsseq) <- bedfile
+  bsseq
 }
 
 grToBsSeq <- function(gr, MandCov='name', coefSmooth=NULL) {
