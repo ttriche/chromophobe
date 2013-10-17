@@ -1,5 +1,6 @@
 ## for JointSegmentation assembly, e.g. Roadmap
 setClassUnion('matrixORNULL', c('NULL','matrix'))
+setClassUnion('GRangesORNULL', c('NULL','GRanges'))
 setClassUnion('dataframeORNULL', c('NULL','data.frame'))
 
 setClass('States', contains="DataFrame") 
