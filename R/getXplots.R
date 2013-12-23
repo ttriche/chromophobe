@@ -1,4 +1,4 @@
-getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL, pval=.000001){
+getXplots<-function(x, nFeats=500, col.fun='jet', pval=.000001) {
 
   ## FIXME: get rid of dependence on GMD
   require('GMD')
@@ -9,9 +9,6 @@ getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL, pval=.000001){
     stop('You need to provide a SummarizedExperiment for this to work')
   } else if( !('chrX' %in% runValue(seqnames(x))) ){
     stop('Your SummarizedExperiment does not contain any chrX probes!')
-  }
-  if( !('gender' %in% names(colData(x))) && !is.null(clinical) ){ 
-    colData(x)[['gender']] <- clinical$gender
   }
 
   ## order by SD, then select top nFeats CpG loci 
@@ -57,7 +54,7 @@ getXplots<-function(x, nFeats=500, col.fun='jet', clinical=NULL, pval=.000001){
       clusts <- suppressWarnings(
                   heatmap.3(tmp, scale="none", trace="none", 
                             ColIndividualColors=colSide, 
-                            color.FUN=get(col.fun), 
+                            color.FUN=get(col.fun),
                             dendrogram='none', labCol=colnames(x), 
                             labRow=Xloci, Colv=T, Rowv=TRUE,
                             main=paste('chrX clustering for', name)))
