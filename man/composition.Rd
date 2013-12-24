@@ -2,17 +2,19 @@
 \alias{composition}
 \docType{function}
 \title{
-  Grab output from bumphunter, filter by pval (default 0.05), export for Homer. 
+  Compositional tools: estimating cell counts & using simplex transformations
 }
 \description{
-  The homer package is perhaps the easiest way to assess motif enrichment for 
-  defined intervals such as chromatin states or differentially enriched regions
-  (as with DMRs, DiffBind regions, blocks, variable methylation regions, etc.).
-  This function takes the output of bumphunter or blockFinder and dumps it into
-  a BED file with columns suitably formatted so that Homer will not puke on it.
+  John Aitchison has repeatedly argued for additive log-contrasts as the proper
+  form in which to manipulate compositional data (that is, data where the parts
+  must sum to unity, and thus induce negative correlation as an artifact).  It 
+  turns out that simplicial principal components are also a terrific way to 
+  capture cell-type-related artifactual effects and control for them in DNA 
+  methylation and chromatin immunopreciptation studies.  The utility functions
+  in chromophobe make this a straightforward practice to implement.
 }
 \details{
-  See also ?composition for more convenience functions.
+  See the 'compositions' package and accompanying book for much, much more.
 }
 \author{
   Tim Triche, Jr. <tim.triche@gmail.com>
