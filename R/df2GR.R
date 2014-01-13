@@ -99,3 +99,15 @@ df2GR <- function(df, keepColumns=F, ignoreStrand=F, prefix='chr') { ## {{{
 setAs("data.frame", "GRanges", function(from) df2GR(from, ...))
 setAs("DataFrame", "GRanges", function(from) df2GR(from, ...))
 as.data.frame.DataFrame <- selectMethod("as.data.frame", "DataFrame")
+
+## for obtaining a GR from a genome, e.g. Hsapiens for AllelicImbalance imports
+genome2GR <- function(genome, chroms=NULL) { # {{{
+  stopifnot(identical(seqnames(genome), seqlevels(genome)))
+  gr <- GRanges(seqnames=seqlevels(genome),
+                ranges=IRanges(start=rep(1L, length(seqlevels(genome))), 
+                               end=seqlengths(genome)[seqlevels(genome)]),
+                strand='*')
+  seqinfo(gr) <- seqinfo(genome)[seqlevels(gr)] 
+  if(is.null(chroms)) chroms <- seqlevels(gr)
+  return(keepSeqlevels(gr, chroms))
+} # }}}
