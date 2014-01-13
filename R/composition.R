@@ -22,11 +22,13 @@ getBloodCellCounts <- function(grSet, referenceMset=NULL) { # {{{
   cat("[estimateCellCounts] Estimating composition.\n")
   counts <- minfi:::projectCellType(getBeta(grSet)[rownames(coefs), ], coefs)
   rownames(counts) <- sampleNames(grSet)
-  if(any(counts < 0)) { ## this happens
+  ## fix a "duh" minfi bug
+  if(any(counts < 0)) { # {{{
     counts[ which(counts < 0) ] <- 0
-    counts <- apply(counts, 1, function(x) x/sum(x))
-  }
-  return(counts) ## how hard was that, really?! 
+    sums <- rowSums(counts)
+    counts <- sweep(counts, 1, sums, '/')
+  } # }}}
+  return(counts) 
 } # }}}
 
 ## stacked bars (for raw counts; note 'compositions' features additional plots)
