@@ -23,5 +23,10 @@ grToBsSeq <- function(gr, MandCov='name', coefSmooth=NULL) {
   BSseq(M=MandT[,1,drop=FALSE], Cov=MandT[,2,drop=FALSE], gr=gr)
 }
 
+smooth450k <- function(grSet) { 
+  require(bsseq)
+  suppressWarnings(BSmooth(as(grSet, 'BSseq'), ver=3, maxGap=1e6))
+}
+
 setAs('GenomicRatioSet','BSseq', function(from) grSetToBsSeq(from))
 setAs('GenomicRanges','BSseq', function(from) grToBsSeq(from))
