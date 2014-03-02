@@ -1,8 +1,8 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
-Version: 0.84
-Date: 2014-01-16
+Version: 0.85
+Date: 2014-03-02
 Author: Tim Triche, Jr. (also Fides Lay, Hui Shen, Jason Ernst & Moiz Bootwalla)
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Import, run, and analyze ChromHMM models and related data types
