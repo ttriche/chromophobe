@@ -31,7 +31,7 @@ getBloodCellCounts <- function(grSet, referenceMset=NULL) { # {{{
   return(counts) 
 } # }}}
 
-## stacked bars (for raw counts; note 'compositions' features additional plots)
+## stacked bars (for raw counts)
 plotCellCounts <- function(estimates) { # {{{
   require(reshape2)
   if(is(estimates, 'matrix')) {
@@ -51,19 +51,19 @@ plotCellCounts <- function(estimates) { # {{{
 } # }}}
 
 ## get simplicial PCs for counts (useful for correcting effects of diff. counts)
-getCellCountPCs <- function(estimates, k=2) { # {{{
-  require(compositions)
-  pr <- princomp(acomp(estimates))
-  pr$scores[,1:k]
-} # }}}
+#getCellCountPCs <- function(estimates, k=2) { # {{{
+  #require(compositions)
+  #pr <- princomp(acomp(estimates))
+  #pr$scores[,1:k]
+#} # }}}
 
 ## visualize the fit and characteristics of closed simplex PCs for cell counts
-plotCellCountPCs <- function(estimates, type="scale") { #{{{
-  require(compositions)
-  pr <- princomp(acomp(estimates))
-  dots <- rep(".", times=nrow(estimates))
-  plot(pr, xlabs=dots, type="biplot", scale=ifelse(type=='scale', 1, 0))
-} # }}}
+#plotCellCountPCs <- function(estimates, type="scale") { #{{{
+  #require(compositions)
+  #pr <- princomp(acomp(estimates))
+  #dots <- rep(".", times=nrow(estimates))
+  #plot(pr, xlabs=dots, type="biplot", scale=ifelse(type=='scale', 1, 0))
+#} # }}}
 
 ## e.g.
 ##
@@ -75,12 +75,14 @@ plotCellCountPCs <- function(estimates, type="scale") { #{{{
 ##   HuGeF.counts <- estimateCellCounts(HuGeF)
 ##   HuGeF <- preprocessQuantile(HuGeF)
 ##   saveRDS(HuGeF, file="HuGeF.rds")
-##   HuGeF.PCs <- compPcs(HuGeF.counts)
-##   for(i in colnames(HuGeF.PCs)) colData(HuGeF)[,i] <- HuGeF.PCs[,i]
-##   saveRDS(HuGeF, file='HuGeF.rds')
-##   dmat <- with(as(colData(HuGeF), 'data.frame'),
-##                model.matrix(~ age + gender + Comp.1 + Comp.2))
-##   stopifnot(nrow(dmat) == ncol(HuGeF)) ## double check that it will work
+##
+#### not run
+#### HuGeF.PCs <- compPcs(HuGeF.counts)
+#### for(i in colnames(HuGeF.PCs)) colData(HuGeF)[,i] <- HuGeF.PCs[,i]
+#### saveRDS(HuGeF, file='HuGeF.rds')
+#### dmat <- with(as(colData(HuGeF), 'data.frame'),
+####              model.matrix(~ age + gender + Comp.1 + Comp.2))
+#### stopifnot(nrow(dmat) == ncol(HuGeF)) ## double check that it will work
 ## 
 ##   ## HuGeF age DMRs
 ##   library(doMC)
