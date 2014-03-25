@@ -163,7 +163,12 @@ setMethod('stateNames',  signature(object='ANY'), # {{{
           function(object) states(object)$Name) # }}}
 setGeneric('stateColors', function(object, ...) standardGeneric('stateColors'))
 setMethod('stateColors', signature(object='ANY'), # {{{
-          function(object) states(object)$Color ) # }}}
+          function(object) {
+            s <- as(states(object), 'data.frame')
+            colrs <- s$Color
+            names(colrs) <- s$Name
+            return(colrs)
+          }) # }}}
 setMethod('stateColors', signature(object='Occupancy'), # {{{
           function(object) {
             colrs <- states(object)$Color 
