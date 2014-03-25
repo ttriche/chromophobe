@@ -257,11 +257,6 @@ setMethod('segmentations', signature(object='SegmentationList'), # {{{
            function(object) return(object)
           ) # }}}
 
-setGeneric('posterior', function(object, x, ...) standardGeneric('posterior'))
-setMethod('posterior', signature(object='JointSegmentation', x='character'),#{{{
-          function(object, x) {
-            stop('FIXME: Posterior probabilities are not yet supported!')
-          }) # }}}
 setMethod("combine", signature=signature(x="JointSegmentation", 
                                          y="JointSegmentation"), # {{{ 
           function(x, y) {
