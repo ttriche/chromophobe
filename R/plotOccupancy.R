@@ -10,6 +10,7 @@ plotOccupancy <- function(x, dropQuiescent=FALSE, stateColours=NULL) {
   colorscale <- NULL
   if(!is.null(stateColours)) colorscale <- stateColours
   else if(!is.null(stateColors(x))) colorscale <- stateColors(x)
+  else if(!is.null(states(x)$Color)) colorscale <- states(x)$Color
   require(reshape2)
   byState <- melt(as.data.frame(x), id.vars='state')
   names(byState) <- gsub('^variable$', 'cell', names(byState))

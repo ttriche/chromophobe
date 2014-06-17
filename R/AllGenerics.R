@@ -283,11 +283,11 @@ setMethod("combine", signature=signature(x="JointSegmentation",
                  exptData=exptData(x),
                  states=states(x) )
           })#}}}
-setMethod("keepSeqlevels", signature(x="SummarizedExperiment", value="ANY"),
-          function(x, value) { # {{{
-            y <- which(rownames(x) %in% names(keepSeqlevels(rowData(x),value)))
-            return(x[y, ])
-          }) # }}}
+#setMethod("keepSeqlevels", signature(x="SummarizedExperiment", value="ANY"),
+#          function(x, value) { # {{{
+#            y <- which(rownames(x) %in% names(keepSeqlevels(rowData(x),value)))
+#            return(x[y, ])
+#          }) # }}}
 setMethod("sort", signature(x="SummarizedExperiment"),
           function(x) { # {{{ 
             x[ names(sort(rowData(x))), ]  
@@ -321,6 +321,3 @@ setReplaceMethod('names',signature(x="JointSegmentation",value="character"),#{{{
 ## SegmentationList methods (mostly to produce a valid Segmentation with states)
 setMethod('$', 'SegmentationList', # {{{
   function(x, name) Segmentation(x[[name]], states(x))) # }}}
-
-## methods defined in tabplot.R
-setGeneric("tabplot", function(dat, ...) standardGeneric('tabplot'))

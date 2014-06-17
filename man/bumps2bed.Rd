@@ -1,6 +1,5 @@
 \name{bumps2bed}
 \alias{bumps2bed}
-\docType{function}
 \title{
   Grab output from bumphunter, filter by pval (default 0.05), export for Homer. 
 }

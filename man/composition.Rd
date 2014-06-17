@@ -1,6 +1,5 @@
 \name{composition}
 \alias{composition}
-\docType{function}
 \title{
   Compositional tools: estimating cell counts & using simplex transformations
 }
