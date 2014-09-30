@@ -42,7 +42,8 @@ plotCellCounts <- function(estimates) { # {{{
   }
   require(ggplot2)
   p <- ggplot(estimates, aes(y=fraction, x=factor(subject), fill=celltype)) +
-              geom_bar(position='fill') + xlab('subject') + ylab('fraction')
+              geom_bar(position='fill', stat='identity') + 
+              xlab('subject') + ylab('fraction')
   p <- p + scale_fill_brewer(type="div", palette=7) +
            ggtitle('Estimated leukocyte composition of each sample') +
            theme(panel.background=element_blank(),
