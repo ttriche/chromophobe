@@ -1,17 +1,27 @@
-plotHistoneTracks <- function(jointSeg, track, trackname='ChIPseq', genome='hg19',
+plotHistoneTracks <- function(jointSeg, 
+                              track, 
+                              trackname='ChIPseq', 
+                              genome='hg19',
                               marks=c('H3K27me3', 'H3K36me3', 'H3K4me1',
-                                      'H3K27ac', 'H3K4me3') , ...) 
+                                      'H3K27ac', 'H3K4me3'), 
+                              markColors=c(H3K27me3='gray50', 
+                                           H3K36me3='green',
+                                           H3K4me1='orange', 
+                                           H3K27ac='darkorange',
+                                           H3K4me3='darkred'),
+                              ...) 
 {
 
-  strcut <- function(x, y='.', z=1) strsplit(x, y, fixed=T)[[1]][z]
-  strpop <- function(x, y='/') {
-    splt <- strsplit(x, y, fixed=T)[[1]]
-    splt[length(splt)] 
-  }
-  getMark <- function(x) {
-    if(length(x) > 1) sapply(x, getMark) 
-    else strcut(strcut(x, '-', 2), '.')
-  }
+  splt <- function(x, y='/') strsplit(x, y, fixed=T)[[1]]
+
+  strcut <- function(x, y='.', z=1) splt(x, y)[z]
+
+  strpop <- function(x, y='/') splt(x, y)[length(splt(x, y))]
+
+  getMark <- function(x) ifelse(length(x) > 1, # recurse if vector
+                                  sapply(x, getMark), # otherwise,
+                                  strcut(strcut(x, '-', 2), '.'))
+
   getColor <- function(wigname) markColors[getMark(wigname)]
 
   bigWigCols <- paste(marks, 'BigWig', sep='.')
