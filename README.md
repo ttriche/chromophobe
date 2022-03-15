@@ -1,13 +1,9 @@
 chromophobe
 ===========
 
-this is an R package to assist in choosing sane segmentation models, such as 
+this is an R package to assist in working with segmentation models, such as 
 those produced by ChromHMM ( http://compbio.mit.edu/ChromHMM/ ). 
 
-chromophobe includes a copy of ChromHMM, which is now also on GitHub:
-https://github.com/jernst98/ChromHMM/
-
-Eventually, the goal is to manage the whole pipeline in parallel via rJava. 
 
 NEW NEWS!
 =========
