@@ -1,4 +1,4 @@
-#' convenience function for dumping sets of chromHMM "contrasts"
+#' convenience function to disjoin and dump a set of HMMs
 #' 
 #' @param HMMs        a GRangesList of HMMs
 #' @param trackName   what to name the track (will also generate BED filename)
@@ -7,6 +7,7 @@
 #' @return            status of the export operation
 #'
 #' @import            rtracklayer
+#' @import            BiocParallel
 #' 
 #' @export
 makeAndExportDisjointHMM <- function(HMMs, trackName, BPPARAM=SerialParam()) {

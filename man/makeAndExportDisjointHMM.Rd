@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeAndExportDisjointHMM.R
 \name{makeAndExportDisjointHMM}
 \alias{makeAndExportDisjointHMM}
-\title{convenience function for dumping sets of chromHMM "contrasts"}
+\title{convenience function to disjoin and dump a set of HMMs}
 \usage{
 makeAndExportDisjointHMM(HMMs, trackName, BPPARAM = SerialParam())
 }
@@ -17,5 +17,5 @@ makeAndExportDisjointHMM(HMMs, trackName, BPPARAM = SerialParam())
 status of the export operation
 }
 \description{
-convenience function for dumping sets of chromHMM "contrasts"
+convenience function to disjoin and dump a set of HMMs
 }

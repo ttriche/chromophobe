@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeAndExportStackedHMM.R
 \name{makeAndExportStackedHMM}
 \alias{makeAndExportStackedHMM}
-\title{convenience function for dumping sets of chromHMM "contrasts"}
+\title{convenience function for dumping sets of chromHMM "contrasts" as stacked HMMs}
 \usage{
 makeAndExportStackedHMM(HMMs, trackName, BPPARAM = SerialParam())
 }
@@ -17,5 +17,5 @@ makeAndExportStackedHMM(HMMs, trackName, BPPARAM = SerialParam())
 status of the export operation
 }
 \description{
-convenience function for dumping sets of chromHMM "contrasts"
+convenience function for dumping sets of chromHMM "contrasts" as stacked HMMs
 }

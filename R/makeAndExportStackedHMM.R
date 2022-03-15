@@ -1,4 +1,4 @@
-#' convenience function for dumping sets of chromHMM "contrasts"
+#' convenience function for dumping sets of chromHMM "contrasts" as stacked HMMs
 #' 
 #' @param HMMs        a GRangesList of HMMs
 #' @param trackName   what to name the track (will also generate BED filename)
@@ -7,6 +7,7 @@
 #' @return            status of the export operation
 #'
 #' @import            rtracklayer
+#' @import            BiocParallel
 #' 
 #' @export
 makeAndExportStackedHMM <- function(HMMs, trackName, BPPARAM=SerialParam()) {
@@ -23,4 +24,3 @@ makeAndExportStackedHMM <- function(HMMs, trackName, BPPARAM=SerialParam()) {
   message("Exported and indexed ", bedFile, ".bgz")
 
 }
-
