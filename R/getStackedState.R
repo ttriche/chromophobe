@@ -5,10 +5,10 @@
 #' 
 #' @return          a GRanges with the state for each condition in mcols() 
 #' 
-#' @details         Try subsetOverlaps(stacked, getStackedStates(stacked,state))
+#' @details         Try subsetOverlaps(stacked, getStackedState(stacked,state))
 #'
 #' @export
-getStackedStates <- function(stacked, state="Bivalent") {
+getStackedState <- function(stacked, state="Bivalent") {
 
   hasState <- subset(stacked, grepl(paste0(state, ":"), name))
   pull <- subsetByOverlaps(stacked, hasState)
