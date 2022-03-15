@@ -16,7 +16,7 @@ getStackedStates <- function(stacked, state="Bivalent") {
                            state=sapply(strsplit(pull$name, ":"), `[`, 1))
   stopifnot(length(unique(pull)) == (length(pull)/2))
   res <- unique(granges(pull))
-  for (cond in getConditions(pull)) {
+  for (cond in getConditions(hasState)) {
     mcols(res)[[cond]] <- subset(pull, condition == cond)$state
   }
   return(res)
