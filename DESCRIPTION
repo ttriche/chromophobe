@@ -1,12 +1,16 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
-Version: 0.95
-Date: 2014-10-04
-Author: Tim Triche, Jr. (also Fides Lay, Hui Shen, Jason Ernst & Moiz Bootwalla)
+Version: 0.99.314
+Date: 2022-03-14
+Author: Tim Triche, Jr. <tim.triche@gmail.com>
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
-Description: Import, run, and analyze ChromHMM models and related data types
-Depends: GenomicRanges (>= 1.10), reshape2, ggplot2, pheatmap, fastcluster
-Imports: Matrix, GenomicRanges, GenomicFeatures, rtracklayer, matrixStats
-Suggests: GMD, ggbio, rJava, minfi, bsseq, Gviz
+Description: Import, simplify, and compare ChromHMM and related segmentations
+Depends: rtracklayer
+Imports: BiocParallel,
+         GenomicFeatures,
+         GenomicRanges,
+         matrixStats
+Suggests: Gviz
 License: AGPL
+RoxygenNote: 7.1.2

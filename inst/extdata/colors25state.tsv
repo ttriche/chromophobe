@@ -1,0 +1,27 @@
+STATE	MNEMONIC	DESCRIPTION	COLOR	RGB
+1	TssA	Active TSS	Red	255,0,0
+2	PromU	Promoter Upstream TSS	Orange Red	255,69,0
+3	PromD1	Promoter Downstream TSS 1	Orange Red	255,69,0
+4	PromD2	Promoter Downstream TSS 2	Orange Red	255,69,0
+5	Tx5	Transcribed - 5' preferential	Green	0,128,0
+6	Tx	Strong transcription	Green	0,128,0
+7	Tx3	Transcribed - 3' preferential	Green	0,128,0
+8	TxWk	Weak transcription	Lighter Green	0,150,0
+9	TxReg	Transcribed & regulatory (Prom/Enh)	Electric Lime	194,225,5
+10	TxEnh5	Transcribed 5' preferential and Enh	Electric Lime	194,225,5
+11	TxEnh3	Transcribed 3' preferential and Enh	Electric Lime	194,225,5
+12	TxEnhW	Transcribed and Weak Enhancer	Electric Lime	194,225,5
+13	EnhA1	Active Enhancer 1	Orange	255,195,77
+14	EnhA2	Active Enhancer 2	Orange	255,195,77
+15	EnhAF	Active Enhancer Flank	Orange	255,195,77
+16	EnhW1	Weak Enhancer 1	Yellow	255,255,0
+17	EnhW2	Weak Enhancer 2	Yellow	255,255,0
+18	EnhAc	Primary H3K27ac possible Enhancer	Yellow	255,255,0
+19	DNase	Primary DNase	Lemon	255,255,102
+20	ZNF/Rpts	ZNF genes & repeats	Aquamarine	102,205,170
+21	Het	Heterochromatin	Light Purple	138,145,208
+22	PromP	Poised Promoter	Pink	230,184,183
+23	PromBiv	Bivalent Promoter	Dark Purple	112,48,160
+24	ReprPC	Repressed Polycomb	Gray	128,128,128
+25	Quies	Quiescent/Low	White	255,255,255
+
