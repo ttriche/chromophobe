@@ -1,8 +1,8 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
-Version: 0.99.314
-Date: 2022-03-14
+Version: 0.99.315
+Date: 2022-03-15
 Author: Tim Triche, Jr. <tim.triche@gmail.com>
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Import, simplify, and compare ChromHMM and related segmentations
@@ -12,5 +12,5 @@ Imports: BiocParallel,
          GenomicRanges,
          matrixStats
 Suggests: Gviz
-License: AGPL
+License: GPL
 RoxygenNote: 7.1.2
