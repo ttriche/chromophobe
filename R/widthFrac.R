@@ -1,12 +1,12 @@
 #' convenience function for generating donut plots
 #' 
 #' @param gs      a GRanges or GenomicSegmentation with states
-#' @param minpct  lower bound (width-based) to label a state 
+#' @param minpct  lower bound (width-based) to label a state (1) 
 #'
 #' @return a data.frame
 #'
 #' @export
-widthFrac <- function(gs, minpct=7) {
+widthFrac <- function(gs, minpct=1) {
 
   states <- nlevels(factor(gs$name))
   bywidth <- vapply(split(gs, gs$name), function(x) sum(width(x)), integer(1))

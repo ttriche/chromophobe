@@ -1,8 +1,10 @@
-#' simple function for a donut plot 
+#' simple function for a donut plot of segment width fractions 
 #'
-#' @param  vec          vector of items
-#' @param  colorScheme  named vector of colors, one per item type
-#' @param  minpct       lower bound to label a slice of the donut 
+#' by default, use widthFrac to determine how much of each state is represented
+#'
+#' @param  gs           a GenomicSegmentation or similar 
+#' @param  colorScheme  named vector of colors (default is simple REMC 25 state)
+#' @param  ...          additional arguments to pass to widthFrac
 #' @param  leg          legend? (FALSE; no legend)
 #' @param  legTitle     title for legend? ("") 
 #'
@@ -11,8 +13,18 @@
 #' @import ggplot2
 #'
 #' @export
-donutPlot <- function(vec, colorScheme, minpct=7, leg=FALSE, legTitle="") {
-  fracs <- makeFrac(vec, minpct=minpct)
+donutPlot <- function(gs, colorScheme=NULL, ..., leg=FALSE, legTitle="") {
+
+  if (is.null(colorScheme)) {
+    colorScheme <- c("Promoter" = "red",
+                     "Transcribed" = "darkgreen", 
+                     "Enhancer" = "orange",
+                     "Accessible" = "yellow",
+                     "Het_Rpt_Qui" = "white", 
+                     "Bivalent" = "darkviolet",
+                     "Repressed" = "gray")
+  }
+  fracs <- widthFrac(gs, ...)
   fracSize <- ifelse(min(fracs$fraction > 0.2), 9,
                      ifelse(min(fracs$fraction > 0.1), 8, 7))
   if (leg) fracSize <- 6 # accommodate legend
@@ -44,4 +56,5 @@ donutPlot <- function(vec, colorScheme, minpct=7, leg=FALSE, legTitle="") {
     p1 <- p1 + guides(fill=guide_legend(title=legTitle))
   }
   return(p1)
+
 }

@@ -2,16 +2,16 @@
 % Please edit documentation in R/donutPlot.R
 \name{donutPlot}
 \alias{donutPlot}
-\title{simple function for a donut plot}
+\title{simple function for a donut plot of segment width fractions}
 \usage{
-donutPlot(vec, colorScheme, minpct = 7, leg = FALSE, legTitle = "")
+donutPlot(gs, colorScheme = NULL, ..., leg = FALSE, legTitle = "")
 }
 \arguments{
-\item{vec}{vector of items}
+\item{gs}{a GenomicSegmentation or similar}
 
-\item{colorScheme}{named vector of colors, one per item type}
+\item{colorScheme}{named vector of colors (default is simple REMC 25 state)}
 
-\item{minpct}{lower bound to label a slice of the donut}
+\item{...}{additional arguments to pass to widthFrac}
 
 \item{leg}{legend? (FALSE; no legend)}
 
@@ -21,5 +21,5 @@ donutPlot(vec, colorScheme, minpct = 7, leg = FALSE, legTitle = "")
 a plot
 }
 \description{
-simple function for a donut plot
+by default, use widthFrac to determine how much of each state is represented
 }

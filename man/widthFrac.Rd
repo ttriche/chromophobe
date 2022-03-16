@@ -4,12 +4,12 @@
 \alias{widthFrac}
 \title{convenience function for generating donut plots}
 \usage{
-widthFrac(gs, minpct = 7)
+widthFrac(gs, minpct = 1)
 }
 \arguments{
 \item{gs}{a GRanges or GenomicSegmentation with states}
 
-\item{minpct}{lower bound (width-based) to label a state}
+\item{minpct}{lower bound (width-based) to label a state (1)}
 }
 \value{
 a data.frame
