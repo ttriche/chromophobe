@@ -1,12 +1,8 @@
-#' simple function for a donut plot of state width/count fractions 
+#' simple function for a circular barchart of state transitions in a stackedHMM
 #'
-#' by default, use genomeFrac to determine how much of each state is represented
-#'
-#' @param  gs           a GenomicSegmentation or similar, or a data.frame
-#' @param  text         text to put in the middle of the donut (NULL)
+#' @param  stacked      a StackedHMM or similar (a GRanges of one is fine)
+#' @param  text         text to put in the middle of the plot (NULL)
 #' @param  colorScheme  named vector of colors (default is simplified REMC)
-#' @param  ...          additional arguments to pass to genomeFrac
-#' @param  fracSize     how big the text should be (5x typical label)
 #' @param  legend       legend? (FALSE; no legend)
 #'
 #' @return a plot
@@ -14,12 +10,12 @@
 #' @import ggplot2
 #'
 #' @export
-donutPlot <- function(gs, text=NULL, colorScheme=NULL, ..., fracSize=5, legend=FALSE) { 
+stackedPlot <- function(stacked, text=NULL, colorScheme=NULL, legend=FALSE) { 
 
-  if (is(gs, "data.frame")) {
-    fracs <- gs
+  if (is(stacked, "data.frame")) {
+    fracs <- stacked  
   } else {
-    fracs <- genomeFrac(gs, ...)
+    fracs <- genomeFrac(stacked, ...) 
   }
   if (is.null(colorScheme)) {
     colorScheme <- c("Promoter" = "red",
@@ -32,6 +28,7 @@ donutPlot <- function(gs, text=NULL, colorScheme=NULL, ..., fracSize=5, legend=F
   }
   stopifnot(all(fracs$category %in% names(colorScheme)))
   
+  fracSize <- ifelse(legend, 4, 5)
   p1 <- ggplot(fracs,
                aes(color=category,
                    fill=category, 
@@ -69,14 +66,7 @@ donutPlot <- function(gs, text=NULL, colorScheme=NULL, ..., fracSize=5, legend=F
         NULL
   
   if (!is.null(text)) {
-    p1 <- p1 + annotate("text", 
-                        x = 0, 
-                        y = 0,
-                        hjust = 0.5,
-                        vjust = 0.5,
-                        size = fracSize,
-                        fontface = "bold", 
-                        label = text)
+    p1 <- p1 + annotate(geom = 'text', x = 0.5, y = 0, label = text)
   }
 
   if (legend) {

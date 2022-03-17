@@ -4,16 +4,16 @@
 \alias{donutPlot}
 \title{simple function for a donut plot of segment width fractions}
 \usage{
-donutPlot(gs, colorScheme = NULL, ..., leg = FALSE, legTitle = "")
+donutPlot(gs, colorScheme = NULL, ..., legend = FALSE, legTitle = "")
 }
 \arguments{
-\item{gs}{a GenomicSegmentation or similar}
+\item{gs}{a GenomicSegmentation or similar, or a data.frame}
 
 \item{colorScheme}{named vector of colors (default is simple REMC 25 state)}
 
 \item{...}{additional arguments to pass to widthFrac}
 
-\item{leg}{legend? (FALSE; no legend)}
+\item{legend}{legend? (FALSE; no legend)}
 
 \item{legTitle}{title for legend? ("")}
 }
