@@ -4,12 +4,14 @@
 \alias{genomeFrac}
 \title{convenience function for generating donut plots of basepair proportions}
 \usage{
-genomeFrac(gs, minpct = 1)
+genomeFrac(gs, minpct = 1, what = NULL)
 }
 \arguments{
 \item{gs}{a GRanges or GenomicSegmentation with states}
 
 \item{minpct}{lower bound (width-based) to label a state (1)}
+
+\item{what}{optional indicator}
 }
 \value{
 a data.frame

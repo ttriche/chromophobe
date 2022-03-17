@@ -4,12 +4,14 @@
 \alias{regionFrac}
 \title{convenience function for generating donut plots of count proportions}
 \usage{
-regionFrac(gs, minpct = 1)
+regionFrac(gs, minpct = 1, what = NULL)
 }
 \arguments{
 \item{gs}{a GRanges or GenomicSegmentation with states}
 
 \item{minpct}{lower bound to label a slice}
+
+\item{what}{optional indicator}
 }
 \value{
 a data.frame

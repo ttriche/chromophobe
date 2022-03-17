@@ -2,24 +2,33 @@
 % Please edit documentation in R/donutPlot.R
 \name{donutPlot}
 \alias{donutPlot}
-\title{simple function for a donut plot of segment width fractions}
+\title{simple function for a donut plot of state width/count fractions}
 \usage{
-donutPlot(gs, colorScheme = NULL, ..., legend = FALSE, legTitle = "")
+donutPlot(
+  gs,
+  text = NULL,
+  colorScheme = NULL,
+  ...,
+  fracSize = 5,
+  legend = FALSE
+)
 }
 \arguments{
 \item{gs}{a GenomicSegmentation or similar, or a data.frame}
 
-\item{colorScheme}{named vector of colors (default is simple REMC 25 state)}
+\item{text}{text to put in the middle of the donut (NULL)}
 
-\item{...}{additional arguments to pass to widthFrac}
+\item{colorScheme}{named vector of colors (default is simplified REMC)}
+
+\item{...}{additional arguments to pass to genomeFrac}
+
+\item{fracSize}{how big the text should be (5x typical label)}
 
 \item{legend}{legend? (FALSE; no legend)}
-
-\item{legTitle}{title for legend? ("")}
 }
 \value{
 a plot
 }
 \description{
-by default, use widthFrac to determine how much of each state is represented
+by default, use genomeFrac to determine how much of each state is represented
 }
