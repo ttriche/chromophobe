@@ -55,6 +55,11 @@ setClass("StackedHMM", contains = "GenomicSegmentation")
 setValidity("StackedHMM", function(object) TRUE )
 
 
+# subclass for scChromHMM data import
+setClass("scChromHMM", contains = "GenomicSegmentation")
+setValidity("scChromHMM", function(object) TRUE )
+
+
 # somewhat of a placeholder class for now 
 # todo: back and forth to/from RaggedExperiment
 # todo: add coercion(s) to/from a segmenter::segmentation object 
@@ -72,3 +77,6 @@ setValidity("ChromHMMList", function(object) TRUE )
 # somewhat of a placeholder class for now 
 setClass("StackedHMMList", contains = "GenomicSegmentationList")
 setValidity("StackedHMMList", function(object) TRUE )
+
+
+# scChromHMMList is kind of its own special beast...

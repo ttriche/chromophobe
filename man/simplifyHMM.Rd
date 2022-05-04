@@ -19,6 +19,23 @@ the same ChromHMM track, but simplified and colored simply
 \description{
 convenience function for adding simplified names & colors to a ChromHMM track
 }
+\details{
+if simplifying further than 5-6 states, fix the map first
+}
+\examples{
+
+# simpler even than the defaults:
+data(remc18state, package="chromophobe")
+simpler <- remc18state
+simpler$SIMPLE <- sub("(Promoter|Enhancer)", "Active", simpler$SIMPLE)
+simpler$SIMPLE <- sub("(Transcribed|Het_Rpt_Qui)", "Other", simpler$SIMPLE)
+simpler[simpler$SIMPLE == "Other", "RGBSIMPLE"] <- "255,255,255"
+
+data(chr19_HMM, package="chromophobe")
+simplerHMM <- simplifyHMM(chr19_HMM, cols=simpler)
+with(simplerHMM, table(name))
+
+}
 \seealso{
 colorHMM
 }

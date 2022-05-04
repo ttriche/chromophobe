@@ -23,6 +23,7 @@ stackedPlot <- function(stacked, text=NULL, colorScheme=NULL, legend=FALSE) {
                      "Enhancer" = "orange",
                      "Accessible" = "yellow",
                      "Het_Rpt_Qui" = "antiquewhite", 
+                     "Other_Unk" = "antiquewhite", 
                      "Bivalent" = "darkviolet",
                      "Repressed" = "gray50")
   }
