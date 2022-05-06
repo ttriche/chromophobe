@@ -66,7 +66,33 @@ setValidity("scChromHMM", function(object) TRUE )
 setClass("GenomicSegmentationList",
          representation(trackLines = "List"),
          contains = "List")
-setValidity("GenomicSegmentationList", function(object) TRUE )
+setValidity("GenomicSegmentationList", function(object) TRUE)
+
+
+#' Like GRangesList, but with a trackLine slot, similar to UCSCData
+#' 
+#' And also a friendly constructor for such things 
+#' 
+#' @param   grl   a GRangesList, with names that become trackLine names
+#' @param   ...   additional arguments, currently ignored 
+#' 
+#' @return        a GenomicSegmentationList object
+#' 
+#' @import        GenomicRanges
+#' @import        rtracklayer 
+#' 
+#' @export 
+GenomicSegmentationList <- function(grl, ...) {
+  
+  lst <- lapply(grl, as, "GenomicSegmentation")
+  for (i in names(grl)) trackName(lst[[i]]) <- i
+
+  # add a validity method to match length(gsl@trackLines) and length(gsl) 
+  trackLines <- List(lapply(lst, slot, "trackLine"))
+  gsl <- new("GenomicSegmentationList", trackLines=trackLines)
+  stop("GenomicSegmentationList coercion is incompletely implemented :-/")
+
+}
 
 
 # somewhat of a placeholder class for now 

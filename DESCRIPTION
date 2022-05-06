@@ -1,21 +1,21 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
-Version: 0.99.503
-Date: 2022-05-03
+Version: 0.99.505
+Date: 2022-05-05
 Author: Tim Triche, Jr. <tim.triche@gmail.com>
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Import, simplify, and compare ChromHMM and related segmentations
 Depends: rtracklayer
 Imports: BiocParallel,
          GenomicFeatures,
+         RaggedExperiment,
          matrixStats, 
          segmenter,
          ggplot2
 Suggests: seqHMM,
-          nullranges,
-          RaggedExperiment,
           excluderanges,
+          nullranges,
           Gviz
 License: GPL
 RoxygenNote: 7.1.2
