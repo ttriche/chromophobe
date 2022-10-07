@@ -3,19 +3,21 @@ Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
 Version: 0.99.505
 Date: 2022-05-05
-Author: Tim Triche, Jr. <tim.triche@gmail.com>
-Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
-Description: Import, simplify, and compare ChromHMM and related segmentations
+Authors@R: c(person("Lauren", "Harmon", role=c("aut")),
+             person("Tim", "Triche", role=c("aut","cre"),
+                    email="trichelab@gmail.com"))
+biocViews: DataImport, GeneExpression, ATACSeq, ChIPSeq
+Description: Import, simplify, and compare ChromHMM and related segmentations. The ChromHMM model introduced by Ernst and colleagues has become a standard representation for chromatin state in the decade since its original publication. Chromophobe distills ChromHMM states into Bioconductor data structures, enabling parallel annotation & processing of arbitrary tabixed files, such as paired-end representations of chromatin looping data. chromophobe leverages Bioconductor infrastructure for parallel processing, fast selective importation, and visualization of condition-dependent divergence in chromatin states, along with associated genomic and epigenomic signals. The GenomicSegmentation superclass adds a TrackLine with sensible defaults to the ubiquitous GRanges class; subclasses implement necessary validation conditions for more specialized plot methods which allow users to intuitively compare "slices" of genomic space across cells & conditions. All methods admit any data structure which can satisfy API requirements (e.g. discrete, discordant, or continuous mixture states), and most allow parallel inspection of the underlying data used to generate state representations. Basic statistical tests for divergence within states or regions are supported, primarily based on the StackedHMM class, which distills divergent regions by cell types or conditions, and the scChromHMM class, which accepts a matrix of state assignment probabilities by cell, condition, or subject. Import methods for BEDPE and arbitrary Tabix'ed input formats support focused investigations of mutations and dosage differences in chromatin modifying genes, with or without stratification by discrete or continuous conditions. 
 Depends: rtracklayer
 Imports: BiocParallel,
-         GenomicFeatures,
          RaggedExperiment,
          matrixStats, 
-         segmenter,
-         ggplot2
+         ggplot2,
+         GenomeInfoDb,
+         GenomicRanges
 Suggests: seqHMM,
           excluderanges,
           nullranges,
           Gviz
 License: GPL
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
