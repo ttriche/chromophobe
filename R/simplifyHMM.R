@@ -29,7 +29,11 @@
 simplifyHMM <- function(HMM, cols=NULL, how=c("MNEMONIC","STATE","NUMBER")) {
 
   if (is.null(cols)) {
-    if (length(unique(HMM$name)) < 19) {
+    if (length(unique(HMM$name)) < 13) {
+      message("Loading Blueprint 12-state colors...")
+      data(blueprint12state, package="chromophobe")
+      cols <- blueprint12state 
+    } else if (length(unique(HMM$name)) < 19) {
       message("Loading default Roadmap 18-state colors...")
       data(remc18state, package="chromophobe")
       cols <- remc18state
@@ -54,6 +58,6 @@ simplifyHMM <- function(HMM, cols=NULL, how=c("MNEMONIC","STATE","NUMBER")) {
   names(cols)[which(names(cols) == "RGBSIMPLE")] <- "RGB"
   cols$MNEMONIC <- NULL
   names(cols)[which(names(cols) == "SIMPLE")] <- "MNEMONIC"
-  return(colorHMM(HMM, cols=cols, how=how))
+  return(colorHMM(HMM, cols=cols, how="MNEMONIC")) # else will fail
 
 }

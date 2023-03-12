@@ -13,7 +13,11 @@
 colorHMM <- function(HMM, cols=NULL, how=c("MNEMONIC","STATE","NUMBER")) { 
 
   if (is.null(cols)) {
-    if (length(unique(HMM$name)) < 19) {
+    if (length(unique(HMM$name)) < 13) {
+      message("Loading Blueprint 12-state colors...")
+      data(blueprint12state, package="chromophobe")
+      cols <- blueprint12state 
+    } else if (length(unique(HMM$name)) < 19) {
       message("Loading default Roadmap 18-state colors...")
       data(remc18state, package="chromophobe")
       cols <- remc18state

@@ -1,0 +1,13 @@
+	MNEMONIC	DESCRIPTION	COLOR	RGB	SIMPLE	RGBSIMPLE
+1	ReprPC	Repressed Polycomb	Silver	128,128,128	Repressed	128,128,128
+2	ReprPCWk	Weak Repressed Polycomb	Gainsboro	192,192,192	Repressed	128,128,128
+3	Quies	Quiescent/Low	White	255,255,255	Het_Rpt_Qui	255,255,255
+4	Het	Heterochromatin	PaleTurquoise	138,145,208	Het_Rpt_Qui	255,255,255
+5	Tx	Strong transcription	Green	0,128,0	Transcribed	0,128,0
+6	TxWk	Weak transcription	DarkGreen	0,100,0	Transcribed	0,128,0
+7	EnhG1	Genic Enhancer	GreenYellow	194,225,5	Enhancer	255,195,77
+8	EnhWk	Weak Enhancer	Yellow	255,255,0	Enhancer	255,195,77
+9	EnhA1	Active Enhancer	Orange	255,195,77	Enhancer	255,195,77
+10	TssFlnk	Flanking TSS	OrangeRed	255,69,0	Promoter	255,0,0
+11	TssBiv	Bivalent/Poised TSS	IndianRed	205,92,92	Bivalent	112,48,160
+12	TssA	Active TSS	Red	255,0,0	Promoter	255,0,0
