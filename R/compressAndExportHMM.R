@@ -29,7 +29,7 @@ compressAndExportHMM <- function(HMM, name, filename=NULL) {
   
   trackGenome <- unique(genome(HMM))
   trackLine <- new("TrackLine", name=name)
-  if (is.null(filename)) filename <- paste(name, trackGenome, bed, sep=".")
+  if (is.null(filename)) filename <- paste(name, trackGenome, "bed", sep=".")
   export(aggregateStates(HMM), filename, index=TRUE) 
 
 }
