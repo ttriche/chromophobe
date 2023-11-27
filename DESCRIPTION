@@ -1,7 +1,7 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
-Version: 0.99.20231127.1
+Version: 0.99.20231127.2
 Date: 2023-11-27
 Author: Tim Triche, Jr. <tim.triche@gmail.com>
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
@@ -11,14 +11,14 @@ Imports: BiocParallel,
          GenomicFeatures,
          RaggedExperiment,
          matrixStats, 
-         segmenter,
          ggplot2
 Suggests: seqHMM,
           excluderanges,
           nullranges,
+          segmenter,
+          easylift,
           Gviz
-LinkingTo: 
-          Rcpp
+LinkingTo: Rcpp
 LazyData: true
 License: GPL
 Encoding: UTF-8
