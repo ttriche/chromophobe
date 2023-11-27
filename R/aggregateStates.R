@@ -42,6 +42,9 @@ aggregateStates <- function(HMM, only3=FALSE, verbose=FALSE, BPPARAM=SerialParam
   HHMM <- ungapped
   
   gapped <- gaps(HMM)
+  # apparently this must be enforced per-contig!
+  gapped <- subset(gapped, seqnames(gapped) == chrom)
+
   ucd <- setdiff(mc, columns)
   if (length(gapped) > 0) {
     gapped$name <- "Gap" 
@@ -54,12 +57,14 @@ aggregateStates <- function(HMM, only3=FALSE, verbose=FALSE, BPPARAM=SerialParam
       }
     }
     mcols(gapped) <- mcols(gapped)[, names(mcols(HHMM))]
-    HHMM <- sort(c(ungapped, gapped))
+    HHMM <- subset(sort(c(ungapped, gapped)), strand == "*")
   }
 
   asRle <- Rle(factor(HHMM$name))
+  ends <- end(HHMM[end(asRle)])
   gr <- sort(HHMM[start(asRle)])
-  end(gr) <- end(HHMM[end(asRle)])
+  stopifnot(all(start(gr) <= ends))
+  end(gr) <- ends
   gr$name <- as.character(gr$name)
   gr$thick <- ranges(gr)
 
