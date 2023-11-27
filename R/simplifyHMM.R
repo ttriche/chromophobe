@@ -21,6 +21,21 @@
 #' simplerHMM <- simplifyHMM(chr19_HMM, cols=simpler)
 #' with(simplerHMM, table(name))
 #'
+#' # blueprint HMM simplification (better to use hg38, though)
+#' \dontrun{
+#'   data(FDFT1)
+#'   bpHMMfiles <- list.files(patt="BlueprintChromHMM.*hg19.bed.gz$")
+#'   names(bpHMMfiles) <- sapply(strsplit(bpHMMfiles,"\\."),`[`,1)
+#'   bpHMMs <- GRangesList(lapply(bpHMMfiles, import, which=FDFT1))
+#'   data(blueprint12state)
+#'   simplified <- GRangesList(lapply(bpHMMs, simplifyHMM,
+#'                                    cols=blueprint12state, how="NUMBER"))
+#'   genome(simplified) <- "hg19"
+#'   for (i in names(simplified)) compressAndExportHMM(simplified[[i]], i)
+#' }
+#'
+#' @references  http://compbio.mit.edu/ChromHMM/
+#'
 #' @seealso     colorHMM
 #'
 #' @import      rtracklayer
@@ -28,6 +43,7 @@
 #' @export
 simplifyHMM <- function(HMM, cols=NULL, how=c("MNEMONIC","STATE","NUMBER")) {
 
+  how <- match.arg(how)
   if (is.null(cols)) {
     if (length(unique(HMM$name)) < 13) {
       message("Loading Blueprint 12-state colors...")
