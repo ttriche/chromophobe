@@ -1,8 +1,8 @@
 Package: chromophobe
 Type: Package
 Title: Explore genomic state models, predictions, sample compositions & overlaps
-Version: 0.99.20231127.4
-Date: 2023-11-27
+Version: 0.99.20240101
+Date: 2024-01-01
 Author: Tim Triche, Jr. <tim.triche@gmail.com>
 Maintainer: Tim Triche, Jr. <tim.triche@gmail.com>
 Description: Import, simplify, and compare ChromHMM and related segmentations
@@ -10,9 +10,10 @@ Depends: rtracklayer
 Imports: BiocParallel,
          GenomicFeatures,
          RaggedExperiment,
-         matrixStats, 
+         matrixStats,
          ggplot2
 Suggests: seqHMM,
+          farver,
           excluderanges,
           nullranges,
           segmenter,
