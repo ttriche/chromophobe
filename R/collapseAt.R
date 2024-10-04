@@ -26,7 +26,6 @@
 #'
 #' @import          GenomicRanges
 #' @import          BiocParallel
-#' @import          matrixStats
 #' 
 #' @export
 collapseAt <- function(x, y, how=c('median','mean','sum'), BPPARAM=SerialParam()) {
